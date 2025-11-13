@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>syuion</title>
+<link type="image/png" rel="shortcut icon" href="favicon.png" id="favicon"/>
+<style>
+  body {
+    margin: 0;
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+    display:flex;
+     background: 
+      linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.1)), 
+      url('background.gif') center/cover no-repeat;
+    height: 100vh;
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro", sans-serif;
+  }
+
+  /* Button container */
+  .liquid-glass-btn {
+    position: relative;
+    display: inline-block;
+    padding: 16px 32px;
+    border-radius: 180px;
+    margin: 16px;
+    color: #ffffffdd;
+    text-decoration: none;
+    font-size: 1.2rem;
+    letter-spacing: 0.4px;
+    backdrop-filter: blur(18px) saturate(180%);
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.25s ease, background 0.25s ease;
+    box-shadow:
+      0 8px 25px rgba(0, 0, 0, 0.45),
+      inset 0 0 25px rgba(255,255,255,0.08);
+  }
+
+  /* Hover lift */
+  .liquid-glass-btn:hover {
+    transform: translateY(-4px);
+    background: rgba(255, 255, 255, 0.18);
+  }
+
+  /* Liquid shimmer animation blob */
+  .liquid-glass-btn::before {
+    content: "";
+    position: absolute;
+    top: -150%;
+    left: -150%;
+    width: 300%;
+    height: 300%;
+    background: radial-gradient(
+      circle,
+      rgba(255,255,255,0.35) 0%,
+      rgba(255,255,255,0.1) 35%,
+      rgba(255,255,255,0) 60%
+    );
+    animation: liquidMove 7s infinite ease-in-out;
+  }
+
+  @keyframes liquidMove {
+    0%   { transform: translate(0, 0) rotate(0deg); }
+    25%  { transform: translate(20%, -10%) rotate(40deg); }
+    50%  { transform: translate(35%, 25%) rotate(80deg); }
+    75%  { transform: translate(-10%, 20%) rotate(40deg); }
+    100% { transform: translate(0, 0) rotate(0deg); }
+  }
+
+  /* Shine sweep */
+  .liquid-glass-btn::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -120%;
+    width: 80%;
+    height: 100%;
+    background: linear-gradient(
+      120deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.45) 50%,
+      transparent 100%
+    );
+    transform: skewX(-20deg);
+    animation: shine 5s infinite;
+  }
+
+  @keyframes shine {
+    0%   { left: -120%; }
+    30%  { left: 140%; }
+    100% { left: 140%; }
+  }
+
+  /* Tap/Click press */
+  .liquid-glass-btn:active {
+    transform: translateY(0);
+    background: rgba(255, 255, 255, 0.22);
+  }
+</style>
+</head>
+
+<body>
+
+  <a href="page.html" class="liquid-glass-btn">
+    Open Page
+  </a>
+  
+  <a target="_blank" href="https://youtube.com/@ISUN365" class="liquid-glass-btn">
+    Youtube
+  </a>
+  
+  <a href="description.html" class="liquid-glass-btn">
+    Updates
+  </a>
+
+</body>
+</html>
