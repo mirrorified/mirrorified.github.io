@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link type="image/png" rel="shortcut icon" href="favicon.png" id="favicon"/>
   <title>Gallery</title>
 
   <style>
@@ -16,34 +15,51 @@
       background-repeat: no-repeat;
       height: 100vh;
       display: flex;
-      justify-content: center;
       align-items: center;
       overflow: hidden;
     }
 
+    /* Horizontal container */
     .gallery-wrapper {
-      width: 90%;
-      height: 90%;
-      overflow-y: auto;
-      background: rgba(255,255,255,0.12);
-      border-radius: 20px;
-      backdrop-filter: blur(12px);
-      border: 1px solid rgba(255,255,255,0.25);
-      box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+      position: relative;
+      width: 100%;
+      height: 300px;
       padding: 20px;
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 18px;
+      display: flex;
+      overflow-x: scroll;
+      overflow-y: hidden;
+      gap: 20px;
+
+      backdrop-filter: blur(10px);
+      background: rgba(255,255,255,0.12);
+      border-top: 1px solid rgba(255,255,255,0.25);
+      border-bottom: 1px solid rgba(255,255,255,0.25);
+
+      scroll-snap-type: x mandatory;
+      scrollbar-width: none; /* Firefox */
+    }
+    .gallery-wrapper::-webkit-scrollbar {
+      display: none; /* Chrome */
     }
 
     .gallery-item {
-      position: relative;
-      cursor: pointer;
+      min-width: 250px;
+      height: 100%;
+      flex-shrink: 0;
+      border-radius: 18px;
       overflow: hidden;
-      border-radius: 14px;
       border: 1px solid rgba(255,255,255,0.35);
-      box-shadow: 0 5px 15px rgba(0,0,0,0.25);
+      box-shadow: 0 5px 18px rgba(0,0,0,0.3);
+      cursor: pointer;
+
+      position: relative;
+      scroll-snap-align: center;
       transition: transform 0.25s ease, box-shadow 0.3s ease;
+    }
+
+    .gallery-item:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 12px 35px rgba(255,255,255,0.4);
     }
 
     .gallery-item img {
@@ -54,21 +70,15 @@
       transition: opacity 0.4s ease, scale 0.3s ease;
     }
 
-    .gallery-item:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 12px 35px rgba(255,255,255,0.4);
-    }
-
     .gallery-item:hover img {
       scale: 1.05;
     }
 
-    /* Fade in when loaded */
     .loaded {
       opacity: 1 !important;
     }
 
-    /* Fullscreen modal */
+    /* Modal */
     .modal {
       position: fixed;
       top: 0;
@@ -87,9 +97,9 @@
       max-height: 90%;
       border-radius: 15px;
       box-shadow: 0 0 40px rgba(255,255,255,0.4);
-      transition: opacity 0.25s ease, transform 0.25s ease;
       opacity: 0;
       transform: scale(0.9);
+      transition: opacity 0.25s ease, transform 0.25s ease;
     }
 
     .modal-img.show {
@@ -124,13 +134,8 @@
       transform: translateY(-50%) scale(1.15);
     }
 
-    .arrow-left {
-      left: 20px;
-    }
-
-    .arrow-right {
-      right: 20px;
-    }
+    .arrow-left { left: 20px; }
+    .arrow-right { right: 20px; }
 
     .home-btn {
       position: fixed;
@@ -159,8 +164,8 @@
 <a href="index.html" class="home-btn">Home</a>
 
 <div class="gallery-wrapper">
-  <!-- Replace with your own images -->
-  <div class="gallery-item"><img loading="lazy" src="PENUP.png"></div>
+  <!-- Replace with your images -->
+  <div class="gallery-item"><img loading="lazy" src="img1.jpg"></div>
   <div class="gallery-item"><img loading="lazy" src="img2.jpg"></div>
   <div class="gallery-item"><img loading="lazy" src="img3.jpg"></div>
   <div class="gallery-item"><img loading="lazy" src="img4.jpg"></div>
@@ -179,15 +184,14 @@
   const images = Array.from(document.querySelectorAll(".gallery-item img"));
   const modal = document.getElementById("modal");
   const modalImg = document.getElementById("modal-img");
-
   let currentIndex = 0;
 
-  // Lazy load fade in
+  // Lazy load fade-in
   images.forEach(img => {
     img.addEventListener("load", () => img.classList.add("loaded"));
   });
 
-  // Open modal
+  // Open modal on click
   images.forEach((img, index) => {
     img.addEventListener("click", () => {
       currentIndex = index;
@@ -218,7 +222,7 @@
     openModal();
   }
 
-  // Close when clicking outside the image
+  // clicking background closes modal
   modal.addEventListener("click", (e) => {
     if (e.target === modal) closeModal();
   });
