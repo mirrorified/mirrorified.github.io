@@ -15,6 +15,11 @@
         align-items: center;
         gap: 40px;
         padding: 40px;
+        opacity: 0;
+        transition: opacity 0.45s ease;
+    }
+    body.fade-in {
+        opacity: 1;
     }
     .home-btn {
     position: fixed;
@@ -169,7 +174,24 @@
     }
 
 </style>
+<script>
 
+document.addEventListener("DOMContentLoaded", () => {
+    document.body.classList.add("fade-in");
+});
+
+document.addEventListener("click", function (e) {
+    const link = e.target.closest("a");
+
+    if (link && link.href && !link.target && !link.href.includes("#")) {
+        e.preventDefault();
+        document.body.classList.add("fade-out");
+        setTimeout(() => {
+            window.location = link.href;
+        }, 300); 
+    }
+});
+</script>
 </head>
 <body>
 
