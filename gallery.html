@@ -93,7 +93,6 @@
         opacity: 1 !important;
     }
 
-    /* ---- FULLSCREEN VIEWER ---- */
     #viewer {
         position: fixed;
         top: 0;
@@ -131,7 +130,6 @@
         to   { opacity: 1; }
     }
 
-    /* ---- VIEWER BUTTONS ---- */
     .viewer-btn {
         position: fixed;
         top: 50%;
@@ -200,7 +198,7 @@ document.addEventListener("click", function (e) {
 <a href="index.html" class="home-btn">
     Home
 </a>
-<!-- GRID -->
+
 <div class="gallery-grid" id="gallery">
     <div class="gallery-item"><img data-src="PENUP.png"></div>
     <div class="gallery-item"><img data-src="Adobe Express - 202511141543.gif"></div>
@@ -210,17 +208,14 @@ document.addEventListener("click", function (e) {
     <div class="gallery-item"><img data-src="img6.jpg"></div>
 </div>
 
-<!-- FULLSCREEN VIEWER -->
 <div id="viewer">
-    <div id="closeBtn">✕</div>
-    
     <img id="viewerImg">
+    <div id="closeBtn">✕</div>
     <div id="prevBtn" class="viewer-btn">❮</div>
     <div id="nextBtn" class="viewer-btn">❯</div>
 </div>
 
 <script>
-    /* ---- LAZY LOADING ---- */
     const lazyImages = document.querySelectorAll("img[data-src]");
     const observer = new IntersectionObserver((entries, obs) => {
         entries.forEach(entry => {
@@ -234,7 +229,6 @@ document.addEventListener("click", function (e) {
 
     lazyImages.forEach(img => observer.observe(img));
 
-    /* ---- FULLSCREEN VIEWER ---- */
     const viewer = document.getElementById("viewer");
     const viewerImg = document.getElementById("viewerImg");
     const galleryItems = [...document.querySelectorAll(".gallery-item img")];
@@ -268,12 +262,10 @@ document.addEventListener("click", function (e) {
     document.getElementById("nextBtn").onclick = nextImage;
     document.getElementById("prevBtn").onclick = prevImage;
 
-    // Close viewer on background click
     viewer.addEventListener("click", (e) => {
         if (e.target === viewer) closeViewer();
     });
 
-    // Keyboard shortcuts
     document.addEventListener("keydown", (e) => {
         if (viewer.style.display !== "flex") return;
 
