@@ -91,35 +91,35 @@ I do random experiments here-->
 
     </style>
     <script>
-  const container = document.getElementById("waveform");
-  const audio = document.getElementById("player");
-  
-  const barCount = 20;
+const container = document.getElementById("waveform");
+const audio = document.getElementById("player");
 
-  for (let i = 0; i < barCount; i++) {
-    let b = document.createElement("div");
-    b.classList.add("bar");
+const barCount = 20; 
+for (let i = 0; i < barCount; i++) {
+  let b = document.createElement("div");
+  b.classList.add("bar");
 
-    b.style.animationDuration = (0.4 + Math.random() * 0.8) + "s";
-    container.appendChild(b);
-  }
-  
-  function togglePlay() {
-    audio.paused ? audio.play() : audio.pause();
-  }
+  b.style.animationDuration = (0.4 + Math.random() * 0.8) + "s";
+  container.appendChild(b);
+}
 
-  audio.onpause = () => {
-    document.querySelectorAll(".bar").forEach(bar => {
-      bar.style.animationPlayState = "paused";
-    });
-  };
-  
-  audio.onplay = () => {
-    document.querySelectorAll(".bar").forEach(bar => {
-      bar.style.animationPlayState = "running";
-    });
-  };
+function togglePlay() {
+  audio.paused ? audio.play() : audio.pause();
+}
+
+audio.onpause = () => {
+  document.querySelectorAll(".bar").forEach(bar => {
+    bar.style.animationPlayState = "paused";
+  });
+};
+
+audio.onplay = () => {
+  document.querySelectorAll(".bar").forEach(bar => {
+    bar.style.animationPlayState = "running";
+  });
+};
 </script>
+
   </head>
 <body>
   <a href="/" class="home-btn">Home</a>
