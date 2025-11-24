@@ -114,12 +114,25 @@
           transition: height 0.3s ease;
       }
       .bar.paused {
-        height: 5px !important;
-        transition: height 5s ease;
+        animation: fallBounce 0.4s ease-out forwards !important;
       }
       @keyframes bounce {
         from{height: 10%;}
         to{height: 100%;}
+      }
+      @keyframes fallBounce {
+          0% {
+              height: var(--current-height, 40px);
+          }
+          70% {
+              height: 0px;
+          }
+          85% {
+              height: 15px;
+          }
+          100% {
+              height: 0px;
+          }
       }
     </style>
     <script>
@@ -185,17 +198,15 @@
       const container = document.getElementById("waveform");
       const audio = document.getElementById("player");
       
-      const barCount = 12;
-  
+      const barCount = 20;
+      
       for (let i = 0; i < barCount; i++) {
           let bar = document.createElement("div");
           bar.classList.add("bar");
-  
           bar.style.animationDuration = (0.4 + Math.random() * 0.8) + "s";
-      
           container.appendChild(bar);
       }
-  
+      
       document.querySelector('.image-btn').onclick = () => {
           audio.paused ? audio.play() : audio.pause();
       };
@@ -209,6 +220,9 @@
       
       audio.onpause = () => {
           document.querySelectorAll(".bar").forEach(bar => {
+              const h = window.getComputedStyle(bar).height;
+              bar.style.setProperty("--current-height", h);
+      
               bar.style.animationPlayState = "paused";
               bar.classList.add("paused");
           });
