@@ -1,297 +1,294 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gallery</title>
-<link type="image/png" rel="shortcut icon" href="favicon.png" id="favicon"/>
-    
-<style>
-    body {
-        margin: 0;
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-        background: url("background.gif") center/cover no-repeat fixed;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 40px;
-        padding: 40px;
-        opacity: 0;
-        transition: opacity 0.45s ease;
-    }
-    body.fade-in {
-        opacity: 1;
-    }
-    .home-btn {
-    position: fixed;
-    top: 14px;
-    right: 14px;
-    padding: 10px 18px;
-    border-radius: 80px;
-    border: 1px solid rgba(255, 255, 255, 0.4);
-    background: rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(20px) saturate(150%);
-    -webkit-backdrop-filter: blur(20px) saturate(150%);
-    color: white;
-    font-size: 1em;
-    cursor: pointer;
-    text-decoration: none;
-    transition: all 0.3s ease;
-    box-shadow: inset 0 0 1px rgba(255,255,255,0.5),
-                0 8px 25px rgba(0,0,0,0.4);
-  }
-.home-btn:hover {
-    background: rgba(255,255,255,0.25);
-    transform: translateY(-2px);
-    box-shadow: 0 0 12px rgba(255,255,255,0.4),
-                0 10px 30px rgba(0,0,0,0.6);
-  }
-.home-btn:active {
-    transform: scale(0.97);
-  }
-
-    h1 {
-        color: white;
-        backdrop-filter: blur(20px);
-        padding: 10px 25px;
-        border-radius: 20px;
-        background: rgba(255,255,255,0.15);
-    }
-
-    .gallery-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-        gap: 25px;
-        width: 90%;
-        max-width: 1400px;
-    }
-
-    .gallery-item {
-        position: relative;
-        overflow: hidden;
-        border-radius: 20px;
-        background: rgba(255,255,255,0.2);
-        backdrop-filter: blur(12px);
-        box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-        transition: transform 0.2s ease;
-        cursor: pointer;
-    }
-
-    .gallery-item:hover {
-        transform: scale(1.03);
-    }
-
-    .gallery-item img {
-        width: 100%;
-        height: 240px;
-        object-fit: cover;
-        opacity: 0;
-        transition: opacity 0.6s ease;
-    }
-
-    .loaded {
-        opacity: 1 !important;
-    }
-
-    #viewer {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        display: none;
-        justify-content: center;
-        align-items: center;
-        backdrop-filter: blur(30px);
-        background: rgba(0,0,0,0.45);
-        animation: fadeIn 0.25s ease;
-        z-index: 9999;
-    }
-
-    #viewer img {
-        max-width: 90vw;
-        max-height: 90vh;
-        border-radius: 20px;
-        box-shadow: 0 20px 60px rgba(0,0,0,0.4);
-        opacity: 0;
-        transform: scale(0.95);
-        animation: popIn 0.25s ease forwards;
-    }
-
-    @keyframes popIn {
-        to {
-            opacity: 1;
-            transform: scale(1);
-        }
-    }
-
-    @keyframes fadeIn {
-        from { opacity: 0; }
-        to   { opacity: 1; }
-    }
-
-    .viewer-btn {
-        position: fixed;
-        top: 50%;
-        transform: translateY(-50%);
-        font-size: 50px;
-        color: white;
-        cursor: pointer;
-        padding: 10px 20px;
-        background: rgba(255,255,255,0.25);
-        backdrop-filter: blur(20px);
-        border-radius: 25px;
-        user-select: none;
-        transition: 0.2s;
-    }
-
-    .viewer-btn:hover {
-        transform: translateY(-50%) scale(1.1);
-    }
-
-    #prevBtn { left: 40px; }
-    #nextBtn { right: 40px; }
-
-    #closeBtn {
-        position: fixed;
-        top: 40px;
-        right: 40px;
-        font-size: 40px;
-        color: white;
-        cursor: pointer;
-        padding: 10px 20px;
-        background: rgba(255,255,255,0.25);
-        backdrop-filter: blur(20px);
-        border-radius: 20px;
-        user-select: none;
-        transition: 0.2s;
-    }
-
-    #closeBtn:hover {
-        transform: scale(1.1);
-    }
-
-</style>
-<script>
-
-document.addEventListener("DOMContentLoaded", () => {
-    document.body.classList.add("fade-in");
-});
-
-document.addEventListener("click", function (e) {
-    const link = e.target.closest("a");
-
-    if (link && link.href && !link.target && !link.href.includes("#")) {
-        e.preventDefault();
-        document.body.classList.add("fade-out");
-        setTimeout(() => {
-            window.location = link.href;
-        }, 300); 
-    }
-});
-</script>
-</head>
-<body>
-
-<h1>Gallery</h1>
-
-<a href="/" class="home-btn">
-    Home
-</a>
-
-<div class="gallery-grid" id="gallery">
-    <div class="gallery-item"><img data-src="PENUP.png"></div>
-    <div class="gallery-item"><img data-src="img2.jpg"></div>
-    <div class="gallery-item"><img data-src="img3.jpg"></div>
-    <div class="gallery-item"><img data-src="img4.jpg"></div>
-    <div class="gallery-item"><img data-src="img5.jpg"></div>
-    <div class="gallery-item"><img data-src="img6.jpg"></div>
-</div>
-
-<div id="viewer">
-    <img id="viewerImg">
-    <div id="closeBtn">✕</div>
-    <div id="prevBtn" class="viewer-btn">❮</div>
-    <div id="nextBtn" class="viewer-btn">❯</div>
-</div>
-
-<script>
-    const lazyImages = document.querySelectorAll("img[data-src]");
-    const observer = new IntersectionObserver((entries, obs) => {
-        entries.forEach(entry => {
-            if (!entry.isIntersecting) return;
-            const img = entry.target;
-            img.src = img.dataset.src;
-            img.onload = () => img.classList.add("loaded");
-            obs.unobserve(img);
-        });
-    }, { rootMargin: "200px" });
-
-    lazyImages.forEach(img => observer.observe(img));
-
-    const viewer = document.getElementById("viewer");
-    const viewerImg = document.getElementById("viewerImg");
-    const galleryItems = [...document.querySelectorAll(".gallery-item img")];
-    let currentIndex = 0;
-
-    function openViewer(index) {
-        currentIndex = index;
-        viewerImg.src = galleryItems[index].src;
-        viewer.style.display = "flex";
-    }
-
-    function closeViewer() {
-        viewer.style.display = "none";
-    }
-
-    function nextImage() {
-        currentIndex = (currentIndex + 1) % galleryItems.length;
-        viewerImg.src = galleryItems[currentIndex].src;
-    }
-
-    function prevImage() {
-        currentIndex = (currentIndex - 1 + galleryItems.length) % galleryItems.length;
-        viewerImg.src = galleryItems[currentIndex].src;
-    }
-
-    galleryItems.forEach((img, index) => {
-        img.addEventListener("click", () => openViewer(index));
-    });
-
-    document.getElementById("closeBtn").onclick = closeViewer;
-    document.getElementById("nextBtn").onclick = nextImage;
-    document.getElementById("prevBtn").onclick = prevImage;
-
-    viewer.addEventListener("click", (e) => {
-        if (e.target === viewer) closeViewer();
-    });
-
-    document.addEventListener("keydown", (e) => {
-        if (viewer.style.display !== "flex") return;
-
-        if (e.key === "ArrowRight") nextImage();
-        if (e.key === "ArrowLeft") prevImage();
-        if (e.key === "Escape") closeViewer();
-
-     document.addEventListener('keydown', function(event) {
-      if ((event.ctrlKey || event.shiftKey) && event.key === "I") {
-        event.preventDefault();
-        console.log('who tf do you think you are.');
-        alert("You're quite curious arent you? (Imagine attempting to steal code:/)");
+    <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gallery</title>
+    <link type="image/png" rel="shortcut icon" href="favicon.png" id="favicon"/>
+        <style>
+            body {
+                margin: 0;
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+                background: url("background.gif") center/cover no-repeat fixed;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 40px;
+                padding: 40px;
+                opacity: 0;
+                transition: opacity 0.45s ease;
+            }
+            body.fade-in {
+                opacity: 1;
+            }
+            .home-btn {
+            position: fixed;
+            top: 14px;
+            right: 14px;
+            padding: 10px 18px;
+            border-radius: 80px;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px) saturate(150%);
+            -webkit-backdrop-filter: blur(20px) saturate(150%);
+            color: white;
+            font-size: 1em;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: inset 0 0 1px rgba(255,255,255,0.5),
+                        0 8px 25px rgba(0,0,0,0.4);
+          }
+        .home-btn:hover {
+            background: rgba(255,255,255,0.25);
+            transform: translateY(-2px);
+            box-shadow: 0 0 12px rgba(255,255,255,0.4),
+                        0 10px 30px rgba(0,0,0,0.6);
+          }
+        .home-btn:active {
+            transform: scale(0.97);
+          }
         
-      }
-      if ((event.ctrlKey || event.metaKey) && event.key === "u") {
-        event.preventDefault();
-        console.log('who tf do you think you are.');
-        alert("You're quite curious arent you? (Imagine attempting to steal code:/)");
-      }
-      if (event.key === "F12") {
-        event.preventDefault();
-        console.log('who tf do you think you are');
-        alert("You're quite curious arent you? (Imagine attempting to steal code:/)");
-      }
-    });
-</script>
-
-</body>
+            h1 {
+                color: white;
+                backdrop-filter: blur(20px);
+                padding: 10px 25px;
+                border-radius: 20px;
+                background: rgba(255,255,255,0.15);
+            }
+        
+            .gallery-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+                gap: 25px;
+                width: 90%;
+                max-width: 1400px;
+            }
+        
+            .gallery-item {
+                position: relative;
+                overflow: hidden;
+                border-radius: 20px;
+                background: rgba(255,255,255,0.2);
+                backdrop-filter: blur(12px);
+                box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+                transition: transform 0.2s ease;
+                cursor: pointer;
+            }
+        
+            .gallery-item:hover {
+                transform: scale(1.03);
+            }
+        
+            .gallery-item img {
+                width: 100%;
+                height: 240px;
+                object-fit: cover;
+                opacity: 0;
+                transition: opacity 0.6s ease;
+            }
+        
+            .loaded {
+                opacity: 1 !important;
+            }
+        
+            #viewer {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100vw;
+                height: 100vh;
+                display: none;
+                justify-content: center;
+                align-items: center;
+                backdrop-filter: blur(30px);
+                background: rgba(0,0,0,0.45);
+                animation: fadeIn 0.25s ease;
+                z-index: 9999;
+            }
+        
+            #viewer img {
+                max-width: 90vw;
+                max-height: 90vh;
+                border-radius: 20px;
+                box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+                opacity: 0;
+                transform: scale(0.95);
+                animation: popIn 0.25s ease forwards;
+            }
+        
+            @keyframes popIn {
+                to {
+                    opacity: 1;
+                    transform: scale(1);
+                }
+            }
+        
+            @keyframes fadeIn {
+                from { opacity: 0; }
+                to   { opacity: 1; }
+            }
+        
+            .viewer-btn {
+                position: fixed;
+                top: 50%;
+                transform: translateY(-50%);
+                font-size: 50px;
+                color: white;
+                cursor: pointer;
+                padding: 10px 20px;
+                background: rgba(255,255,255,0.25);
+                backdrop-filter: blur(20px);
+                border-radius: 25px;
+                user-select: none;
+                transition: 0.2s;
+            }
+        
+            .viewer-btn:hover {
+                transform: translateY(-50%) scale(1.1);
+            }
+        
+            #prevBtn { left: 40px; }
+            #nextBtn { right: 40px; }
+        
+            #closeBtn {
+                position: fixed;
+                top: 40px;
+                right: 40px;
+                font-size: 40px;
+                color: white;
+                cursor: pointer;
+                padding: 10px 20px;
+                background: rgba(255,255,255,0.25);
+                backdrop-filter: blur(20px);
+                border-radius: 20px;
+                user-select: none;
+                transition: 0.2s;
+            }
+        
+            #closeBtn:hover {
+                transform: scale(1.1);
+            }
+        
+        </style>
+        <script>
+        
+        document.addEventListener("DOMContentLoaded", () => {
+            document.body.classList.add("fade-in");
+        });
+        
+        document.addEventListener("click", function (e) {
+            const link = e.target.closest("a");
+        
+            if (link && link.href && !link.target && !link.href.includes("#")) {
+                e.preventDefault();
+                document.body.classList.add("fade-out");
+                setTimeout(() => {
+                    window.location = link.href;
+                }, 300); 
+            }
+        });
+         document.addEventListener('keydown', function(event) {
+              if ((event.ctrlKey || event.shiftKey) && event.key === "I") {
+                event.preventDefault();
+                console.log('who tf do you think you are.');
+                alert("You're quite curious arent you? (Imagine attempting to steal code:/)");
+                
+              }
+              if ((event.ctrlKey || event.metaKey) && event.key === "u") {
+                event.preventDefault();
+                console.log('who tf do you think you are.');
+                alert("You're quite curious arent you? (Imagine attempting to steal code:/)");
+              }
+              if (event.key === "F12") {
+                event.preventDefault();
+                console.log('who tf do you think you are');
+                alert("You're quite curious arent you? (Imagine attempting to steal code:/)");
+              }
+         });
+        </script>
+    </head>
+    <body>
+        <h1>Gallery</h1>
+        <a href="/" class="home-btn">
+            Home
+        </a>
+        
+        <div class="gallery-grid" id="gallery">
+            <div class="gallery-item"><img data-src="PENUP.png"></div>
+            <div class="gallery-item"><img data-src="img2.jpg"></div>
+            <div class="gallery-item"><img data-src="img3.jpg"></div>
+            <div class="gallery-item"><img data-src="img4.jpg"></div>
+            <div class="gallery-item"><img data-src="img5.jpg"></div>
+            <div class="gallery-item"><img data-src="img6.jpg"></div>
+        </div>
+        
+        <div id="viewer">
+            <img id="viewerImg">
+            <div id="closeBtn">✕</div>
+            <div id="prevBtn" class="viewer-btn">❮</div>
+            <div id="nextBtn" class="viewer-btn">❯</div>
+        </div>
+        
+        <script>
+            const lazyImages = document.querySelectorAll("img[data-src]");
+            const observer = new IntersectionObserver((entries, obs) => {
+                entries.forEach(entry => {
+                    if (!entry.isIntersecting) return;
+                    const img = entry.target;
+                    img.src = img.dataset.src;
+                    img.onload = () => img.classList.add("loaded");
+                    obs.unobserve(img);
+                });
+            }, { rootMargin: "200px" });
+        
+            lazyImages.forEach(img => observer.observe(img));
+        
+            const viewer = document.getElementById("viewer");
+            const viewerImg = document.getElementById("viewerImg");
+            const galleryItems = [...document.querySelectorAll(".gallery-item img")];
+            let currentIndex = 0;
+        
+            function openViewer(index) {
+                currentIndex = index;
+                viewerImg.src = galleryItems[index].src;
+                viewer.style.display = "flex";
+            }
+        
+            function closeViewer() {
+                viewer.style.display = "none";
+            }
+        
+            function nextImage() {
+                currentIndex = (currentIndex + 1) % galleryItems.length;
+                viewerImg.src = galleryItems[currentIndex].src;
+            }
+        
+            function prevImage() {
+                currentIndex = (currentIndex - 1 + galleryItems.length) % galleryItems.length;
+                viewerImg.src = galleryItems[currentIndex].src;
+            }
+        
+            galleryItems.forEach((img, index) => {
+                img.addEventListener("click", () => openViewer(index));
+            });
+        
+            document.getElementById("closeBtn").onclick = closeViewer;
+            document.getElementById("nextBtn").onclick = nextImage;
+            document.getElementById("prevBtn").onclick = prevImage;
+        
+            viewer.addEventListener("click", (e) => {
+                if (e.target === viewer) closeViewer();
+            });
+        
+            document.addEventListener("keydown", (e) => {
+                if (viewer.style.display !== "flex") return;
+        
+                if (e.key === "ArrowRight") nextImage();
+                if (e.key === "ArrowLeft") prevImage();
+                if (e.key === "Escape") closeViewer();
+        
+            });
+        </script>
+    </body>
 </html>
