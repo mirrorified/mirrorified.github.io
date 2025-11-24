@@ -112,6 +112,10 @@
           border-radius: 10px;
           animation: bounce 0.6s ease-in-out infinite alternate;
       }
+      .bar.paused {
+        height: 0 !important;
+        animation: none !important;
+      }
       @keyframes bounce {
         from{height: 10%;}
         to{height: 100%;}
@@ -175,35 +179,39 @@
           <p>“當我找到你時，你就在我的懷裡...<br> 我的心，我的愛，我的腦海...<br> 我把你擁在懷裡...<br> 我把你擁入懷中...<br> 你成了我的靈魂，我的未來...”</p>
           
         </ul>
-
+  
     <script>
-      const container = document.getElementById("waveform");
-      const audio = document.getElementById("player");
-      
-      const barCount = 10; 
-      for (let i = 0; i < barCount; i++) {
-        let b = document.createElement("div");
-        b.classList.add("bar");
-      
-        b.style.animationDuration = (0.4 + Math.random() * 0.8) + "s";
-        container.appendChild(b);
-      }
-      
-      function togglePlay() {
+    const container = document.getElementById("waveform");
+    const audio = document.getElementById("player");
+    
+    const barCount = 20;
+  
+    for (let i = 0; i < barCount; i++) {
+        let bar = document.createElement("div");
+        bar.classList.add("bar");
+
+        bar.style.animationDuration = (0.4 + Math.random() * 0.8) + "s";
+    
+        container.appendChild(bar);
+    }
+
+    document.querySelector('.image-btn').onclick = () => {
         audio.paused ? audio.play() : audio.pause();
-      }
-      
-      audio.onpause = () => {
+    };
+    
+    audio.onplay = () => {
         document.querySelectorAll(".bar").forEach(bar => {
-          bar.style.animationPlayState = "paused";
+            bar.classList.remove("paused");
+            bar.style.animationPlayState = "running";
         });
-      };
-      
-      audio.onplay = () => {
+    };
+    
+    audio.onpause = () => {
         document.querySelectorAll(".bar").forEach(bar => {
-          bar.style.animationPlayState = "running";
+            bar.style.animationPlayState = "paused";
+            bar.classList.add("paused");
         });
-      };
+    };
     </script>
   </body>
 </html>
