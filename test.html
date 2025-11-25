@@ -130,7 +130,7 @@ I do random experiments here-->
 const container = document.getElementById("waveform");
 const audio = document.getElementById("player");
 
-const barCount = 11;
+const barCount = 24;
 let bars = [];
 let barHeights = new Array(barCount).fill(0);
 let velocities = new Array(barCount).fill(0);
@@ -175,30 +175,30 @@ function animateBars() {
         let volume = sum / samplesPerBar;
 
         let maxHeight = 40;
-        
         let target = (volume / 255) * maxHeight;
         let current = barHeights[i];
 
         let spring = 0.25;
         let friction = 0.12;
         let bounce = 0.3;
-        
+
         if (target > current) {
             velocities[i] += (target - current) * spring;
         } else {
             velocities[i] -= (current - target) * friction;
             velocities[i] += bounce;
         }
-        
+
         velocities[i] *= 0.82;
         current += velocities[i];
-        
+
         if (current < 0) current = 0;
-        
+
         barHeights[i] = current;
+
         bars[i].style.height = current + "px";
-        
-        }
+    }
+}
 
 document.querySelector(".image-btn").onclick = () => {
     if (!audioCtx) initAudio();
@@ -221,19 +221,8 @@ audio.onpause = () => {
         bar.classList.add("paused");
     });
 };
-}
-
-  var player = document.getElementById("player");
-
-  function togglePlay() {
-    if (player.paused) {
-      player.play();
-    } else {
-      player.pause();
-    }
-  }
-
 </script>
+
 
 </body>
 </html>
