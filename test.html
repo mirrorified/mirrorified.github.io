@@ -222,6 +222,17 @@ audio.onpause = () => {
     });
 };
 }
+
+  var player = document.getElementById("player");
+
+  function togglePlay() {
+    if (player.paused) {
+      player.play();
+    } else {
+      player.pause();
+    }
+  }
+
 </script>
 
 </body>
