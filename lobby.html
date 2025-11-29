@@ -202,10 +202,6 @@
     
       const songs = [
         {
-          src: "ssVid.net--Jumping-Machine-跳楼机.mp3",
-          img: "tiaolouji.jpg"
-        },
-        {
           src: "ssVid.net--生分-男版.mp3",
           img: "unnamed (11).jpg"
         },
@@ -219,7 +215,7 @@
       const audio = document.getElementById("player");
       const thumb = document.getElementById("songThumb");
       
-      /* Load  song */
+
       function loadSong(i) {
         currentSong = i;
         audio.src = songs[i].src;
@@ -227,7 +223,7 @@
       }
       loadSong(0);
       
-      /* Next / Prev */
+
       document.getElementById("nextSong").onclick = () => {
         currentSong = (currentSong + 1) % songs.length;
         loadSong(currentSong);
