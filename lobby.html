@@ -261,19 +261,30 @@
     
         analyser.getByteFrequencyData(frequencyData);
     
-    const chunk = frequencyData.length / barCount;
-    
-    for (let i = 0; i < barCount; i++) {
-        let sum = 0;
-    
-        for (let j = 0; j < chunk; j++) {
-            const index = Math.floor(i * chunk + j);
-            if (index < frequencyData.length) {
-                sum += frequencyData[index];
-            }
+        function getFrequencyIndex(percent) {
+            // maps 0–1 to log scale across the FFT spectrum
+            const minFreq = 20;   // human hearing limit
+            const maxFreq = 20000;
+            const freq = minFreq * Math.pow(maxFreq / minFreq, percent);
+            return Math.floor((freq / (audioCtx.sampleRate / 2)) * frequencyData.length);
         }
-    
-        const volume = sum / chunk;
+        
+        for (let i = 0; i < barCount; i++) {
+            const startPercent = i / barCount;
+            const endPercent = (i + 1) / barCount;
+        
+            const start = getFrequencyIndex(startPercent);
+            const end = getFrequencyIndex(endPercent);
+        
+            let sum = 0;
+            let count = 0;
+        
+            for (let j = start; j < end; j++) {
+                sum += frequencyData[j];
+                count++;
+            }
+        
+            const volume = sum / Math.max(count, 1);
     
             const maxHeight = 40;
             const target = (volume / 255) * maxHeight;
