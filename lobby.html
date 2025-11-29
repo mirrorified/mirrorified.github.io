@@ -261,11 +261,18 @@
     
         analyser.getByteFrequencyData(frequencyData);
     
-        const chunk = Math.floor(frequencyData.length / barCount);
+        const chunk = frequencyData.length / barCount;
+
     
         for (let i = 0; i < barCount; i++) {
             let sum = 0;
-            for (let j = 0; j < chunk; j++) sum += frequencyData[i * chunk + j];
+            for (let j = 0; j < chunk; j++) {
+              const index = Math.floor(i * chunk + j);
+              if (index < frequencyData.length) {
+                  sum += frequencyData[index];
+              }
+            }
+
             const volume = sum / chunk;
     
             const maxHeight = 40;
