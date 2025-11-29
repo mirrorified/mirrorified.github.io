@@ -132,7 +132,42 @@
         text-decoration: none;
       }
     </style>
-    
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+          document.body.classList.add("fade-in");
+      });
+      
+      
+      document.addEventListener("click", function (e) {
+          const link = e.target.closest("a");
+      
+          if (link && link.href && !link.target && !link.href.includes("#")) {
+              e.preventDefault();
+              document.body.classList.add("fade-out");
+              setTimeout(() => {
+                  window.location = link.href;
+              }, 300); 
+          }
+      });
+       document.addEventListener('keydown', function(event) {
+            if ((event.ctrlKey || event.shiftKey) && event.key === "I") {
+              event.preventDefault();
+              console.log('who tf do you think you are.');
+              alert("You're quite curious arent you? (Imagine attempting to steal code :/ )");
+              
+            }
+            if ((event.ctrlKey || event.metaKey) && event.key === "U") {
+              event.preventDefault();
+              console.log('who tf do you think you are.');
+              alert("You're quite curious arent you? (Imagine attempting to steal code :/ )");
+            }
+            if (event.key === "F12") {
+              event.preventDefault();
+              console.log('who tf do you think you are');
+              alert("You're quite curious arent you? (Imagine attempting to steal code :/ )");
+            }
+      });
+    </script>
   </head>
   <body>
   
