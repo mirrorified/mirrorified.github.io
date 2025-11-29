@@ -10,10 +10,40 @@
       body {
         margin: 0;
         height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
         background: url("background.gif") center/cover no-repeat;
         font-family: -apple-system, BlinkMacSystemFont, "SF Pro", sans-serif;
+        opacity: 0;
+        transition: opacity 0.45s ease;
       }
-    
+      body.fade-in {
+        opacity: 1;
+      }
+      p {
+        font-size: 1.1rem;
+        color: rgba(255,255,255,0.85);
+        margin-bottom: 30px;
+      }
+      .welcome-message {
+        font-size: 1.7em;
+        font-weight: 600;
+        color: white;
+        margin-bottom: 25px;
+        text-shadow: 0 0 15px rgba(255,255,255,0.7);
+        backdrop-filter: blur(3px);
+        padding: 12px 24px;
+        border-radius: 14px;
+        background: rgba(0,0,0,0.3);
+        border: 1px solid rgba(255,255,255,0.2);
+      }
+
+      .button-container {
+        display: flex;
+        gap: 20px;
+      }
       #audioControls {
         position: absolute;
         top: 14px;
