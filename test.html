@@ -224,42 +224,42 @@
       
         const chunk = Math.floor(frequencyData.length / barCount);
       
-        for (let i = 0; i < barCount; i++) {
-          let sum = 0;
-          for (let j = 0; j < chunk; j++) sum += frequencyData[i * chunk + j];
-          const volume = sum / chunk;
-      
-          const maxHeight = 40;
-          const target = (volume / 255) * maxHeight;
-          let current = barHeights[i];
-      
-          let spring = 0.25;
-          let friction = 0.12;
-          let bounce = 0.3;
-      
-          if (target > current) velocities[i] += (target - current) * spring;
-          else {
-            velocities[i] -= (current - target) * friction;
-            velocities[i] += bounce;
-          }
-      
-          velocities[i] *= 0.82;
-          current += velocities[i];
-      
-          if (current < 0) current = 0;
-      
-          barHeights[i] = current;
-          bars[i].style.height = current + "px";
+      for (let i = 0; i < barCount; i++) {
+  
+        const start = Math.floor((i / barCount) * frequencyData.length);
+        const end   = Math.floor(((i + 1) / barCount) * frequencyData.length);
+  
+        let sum = 0;
+        for (let j = start; j < end; j++) {
+          sum += frequencyData[j];
         }
+  
+        const volume = sum / Math.max(end - start, 1);
+  
+        const maxHeight = 40;
+        const target = (volume / 255) * maxHeight;
+        let current = barHeights[i];
+  
+        let spring = 0.25;
+        let friction = 0.12;
+        let bounce = 0.3;
+  
+        if (target > current) velocities[i] += (target - current) * spring;
+        else {
+          velocities[i] -= (current - target) * friction;
+          velocities[i] += bounce;
       }
-      
-      
-      audio.onplay = () => {
-        thumb.classList.add("playing");
-        bars.forEach(b => b.classList.remove("paused"));
-        animateBars();
-      };
-      
+  
+      velocities[i] *= 0.82;
+      current += velocities[i];
+  
+      if (current < 0) current = 0;
+  
+      barHeights[i] = current;
+      bars[i].style.height = current + "px";
+  }
+  
+        
       audio.onpause = () => {
         thumb.classList.remove("playing");
         bars.forEach((bar, i) => {
