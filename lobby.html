@@ -115,21 +115,25 @@
           font-size: 0.82rem;
           color: rgba(255,255,255,0.7);
         }
-        /* Waveform */
+
         #waveform {
-            display: flex;
-            gap: 3px;
-            height: 42px;
-            align-items: flex-end;
+          display: flex;
+          gap: 4px;
+          height: var(--bar-max);
+          align-items: flex-end;
+          width: calc(56px + 12px + 180px);
+          padding-left: 6px;
         }
+  
         .bar {
-            width: 5px;
-            background: rgba(255,255,255,0.85);
-            border-radius: 10px;
-            transition: height 0.3s ease;
+          width: 5px;
+          background: rgba(255,255,255,0.88);
+          border-radius: 10px;
+          transition: height 0.22s cubic-bezier(.2,.9,.2,1);
+          height: 4px;
         }
         .bar.paused {
-            animation: fallBounce 0.4s ease-out forwards;
+          animation: fallBounce .36s ease-out forwards;
         }
         @keyframes fallBounce {
             0% { height: var(--current-height, 40px); }
