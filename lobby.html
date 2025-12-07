@@ -190,50 +190,50 @@
   </head>
 
   <body>
-  
-      <audio id="player" preload="auto"></audio>
-  
-      <a href="/" class="home-btn"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"> <path d="M13.9897 20.9982H19.0001V12H21.0001L12.0001 3L3.04309 12H5.00006V20.9982H10.0001M13.9897 20.9982L13.9988 14.0013C13.9994 13.4885 13.6139 13.0653 13.1167 13.0069L11.0001 13C10.4478 13 10.0001 13.4477 10.0001 14V20.9982M13.9897 20.9982H10.0001" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/> </svg></a>
-  
-      <div id="audioControls">
-        <div id="songSelector">
-          <button id="prevSong" class="arrow" title="Previous">⏮</button>
+    <!-- audio element (required) -->
+    <audio id="player" preload="auto"></audio>
 
-          <img id="songThumb" class="thumbButton" onclick="togglePlayPause()" alt="song cover">
-  
-          <button id="nextSong" class="arrow" title="Next">⏭</button>
+    <!-- home icon -->
+    <a href="/" class="home-btn" aria-label="Home">
+      <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M13.9897 20.9982H19.0001V12H21.0001L12.0001 3L3.04309 12H5.00006V20.9982H10.0001M13.9897 20.9982L13.9988 14.0013C13.9994 13.4885 13.6139 13.0653 13.1167 13.0069L11.0001 13C10.4478 13 10.0001 13.4477 10.0001 14V20.9982M13.9897 20.9982H10.0001" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </a>
 
-          <div class="meta" role="status" aria-live="polite">
-            <div class="title" id="songTitle">—</div>
-            <div class="artist" id="songArtist">—</div>
-          </div>
+    <div id="audioControls">
+      <div id="songSelector">
+        <button id="prevSong" class="arrow" title="Previous">⇦</button>
+
+        <img id="songThumb" class="thumbButton" onclick="togglePlayPause()" alt="song cover">
+
+        <button id="nextSong" class="arrow" title="Next">⇨</button>
+
+        <div class="meta" role="status" aria-live="polite">
+          <div class="title" id="songTitle">—</div>
+          <div class="artist" id="songArtist">—</div>
         </div>
+      </div>
 
-        <div id="waveform" aria-hidden="true"></div>
-      </div>
-  
-      <div class="welcome-message">
-          *✧･ﾟ:* Tian Hong (天紅) *✧･ﾟ:*
-      </div>
-  
-      <div class="welcome-message" style="animation-delay: 0.1s;">
-          <ul>
-              <p>「當我找到你時, 你就在我的懷裡...
-                  <br> 我的心，我的愛，我的腦海...
-                  <br> 我把你擁在懷裡...
-                  <br> 我把你擁入懷中...
-                  <br> 你成了我的靈魂，我的未來...」
-              </p>
-          </ul>
-      </div>
-  
- <script>
+      <div id="waveform" aria-hidden="true"></div>
+    </div>
+
+    <div class="welcome-message">*✧･ﾟ:* Tian Hong (天紅) *✧･ﾟ:*</div>
+
+    <div class="welcome-message" style="animation-delay: 0.1s;">
+      <p>「當我找到你時, 你就在我的懷裡...
+        <br> 我的心，我的愛，我的腦海...
+        <br> 我把你擁在懷裡...
+        <br> 我把你擁入懷中...
+        <br> 你成了我的靈魂，我的未來...」</p>
+    </div>
+
+    <script>
       document.addEventListener('DOMContentLoaded', () => document.body.classList.add('fade-in'));
 
       const songs = [
-        { src: "ssVid.net--Jumping-Machine-跳楼机.mp3", img: "tiaolouji.jpg", title: "Jumping Machine", artist: "LBI" },
-        { src: "ssVid.net--生分-男版.mp3", img: "unnamed (11).jpg", title: "生分 (男版)", artist: "en" },
-        { src: "ssVid.net--放纵想念.mp3", img: "download (4).jpg", title: "放纵想念", artist: "LOFTTHESTAR" },
+        { src: "ssVid.net--Jumping-Machine-跳楼机.mp3", img: "tiaolouji.jpg", title: "Jumping Machine", artist: "Unknown" },
+        { src: "ssVid.net--生分-男版.mp3", img: "unnamed (11).jpg", title: "生分 (男版)", artist: "Artist" },
+        { src: "ssVid.net--放纵想念.mp3", img: "download (4).jpg", title: "放纵想念", artist: "Artist" },
         { src: "ssVid.net--四点的海棠花未眠.mp3", img: "images0.jpg", title: "四点的海棠", artist: "Artist" },
         { src: "ssVid.net--素未谋面.mp3", img: "unnamed (17).jpg", title: "素未谋面", artist: "Artist" },
         { src: "ssVid.net--察觉.mp3", img: "unnamed (13).jpg", title: "察觉", artist: "Artist" },
@@ -281,6 +281,7 @@
         }
       }
 
+      // waveform
       const waveform = document.getElementById('waveform');
       const barCount = 15;
       const bars = [];
@@ -301,7 +302,7 @@
       function initAudio() {
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         analyser = audioCtx.createAnalyser();
-        analyser.fftSize = 512; // 128 bins
+        analyser.fftSize = 1024;
         analyser.smoothingTimeConstant = 0.6;
 
         const src = audioCtx.createMediaElementSource(audio);
