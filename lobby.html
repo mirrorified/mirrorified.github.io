@@ -98,7 +98,23 @@
         .thumbButton.playing {
             box-shadow: 0 0 18px rgba(255,255,255,0.6);
         }
-
+        .meta {
+          display: flex;
+          flex-direction: column;
+          gap: 2px;
+          margin-left: 6px;
+          min-width: 180px;
+        }
+        .meta .title {
+          font-weight: 600;
+          font-size: 0.95rem;
+          color: rgba(255,255,255,0.95);
+          letter-spacing: 0.2px;
+        }
+        .meta .artist {
+          font-size: 0.82rem;
+          color: rgba(255,255,255,0.7);
+        }
         /* Waveform */
         #waveform {
             display: flex;
@@ -119,6 +135,12 @@
             0% { height: var(--current-height, 40px); }
             70% { height: 0; }
             100% { height: 0; }
+        }
+
+        @media (max-width:420px) {
+          .meta { display:none; }
+          #waveform { width: 140px; }
+          .thumbButton { width:48px; height:48px; }
         }
     </style>
 
@@ -160,13 +182,20 @@
       <a href="/" class="home-btn"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"> <path d="M13.9897 20.9982H19.0001V12H21.0001L12.0001 3L3.04309 12H5.00006V20.9982H10.0001M13.9897 20.9982L13.9988 14.0013C13.9994 13.4885 13.6139 13.0653 13.1167 13.0069L11.0001 13C10.4478 13 10.0001 13.4477 10.0001 14V20.9982M13.9897 20.9982H10.0001" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/> </svg></a>
   
       <div id="audioControls">
-          <div id="songSelector">
-              <button id="prevSong" class="arrow">⏮</button>
-              <img id="songThumb" class="thumbButton" onclick="togglePlayPause()">
-              <button id="nextSong" class="arrow">⏭</button>
-          </div>
+        <div id="songSelector">
+          <button id="prevSong" class="arrow" title="Previous">⏮</button>
+
+          <img id="songThumb" class="thumbButton" onclick="togglePlayPause()" alt="song cover">
   
-          <div id="waveform"></div>
+          <button id="nextSong" class="arrow" title="Next">⏭</button>
+
+          <div class="meta" role="status" aria-live="polite">
+            <div class="title" id="songTitle">—</div>
+            <div class="artist" id="songArtist">—</div>
+          </div>
+        </div>
+
+        <div id="waveform" aria-hidden="true"></div>
       </div>
   
       <div class="welcome-message">
@@ -184,142 +213,153 @@
           </ul>
       </div>
   
-    <script>
-    
-    const songs = [
-        { src: "ssVid.net--Jumping-Machine-跳楼机.mp3", img: "tiaolouji.jpg" },
-        { src: "ssVid.net--生分-男版.mp3", img: "unnamed (11).jpg" },
-        { src: "ssVid.net--放纵想念.mp3", img: "download (4).jpg" },
-        { src: "ssVid.net--四点的海棠花未眠.mp3", img: "images0.jpg" },
-        { src: "ssVid.net--素未谋面.mp3", img: "unnamed (17).jpg" },
-        { src: "ssVid.net--察觉.mp3", img: "unnamed (13).jpg"},
-        { src: "ssVid.net--鄭潤澤-你已把我的心磨平-你已把我的心磨平-把所有躁動都磨平-不知覺地傾聽-心裡反覆質疑-動態歌詞MV.mp3", img: "unnamed (14).jpg"},
-        { src: "ssVid.net--可望不可及.mp3", img: "unnamed (16).jpg"},
-        { src: "ssVid.net--城外.mp3", img: "unnamed (15).jpg"},
-        { src: "ssVid.net--完美折磨.mp3", img: "unnamed (18).jpg"},
-        { src: "ssVid.net--都一样会走.mp3", img: "unnamed (19).jpg"},
-        { src: "ssVid.net--愿某人.mp3", img: "unnamed (20).jpg"},
-    ];
-    
-    let currentSong = 0;
-    const audio = document.getElementById("player");
-    const thumb = document.getElementById("songThumb");
-    
-    
-    function loadSong(i) {
-        currentSong = i;
-        audio.src = songs[i].src;
-        thumb.src = songs[i].img;
-    }
-    loadSong(0);
-    
-    
-    document.getElementById("nextSong").onclick = () => {
-        currentSong = (currentSong + 1) % songs.length;
-        loadSong(currentSong);
-    };
-    document.getElementById("prevSong").onclick = () => {
-        currentSong = (currentSong - 1 + songs.length) % songs.length;
-        loadSong(currentSong);
-    };
-    
-    
-    function togglePlayPause() {
+ <script>
+      document.addEventListener('DOMContentLoaded', () => document.body.classList.add('fade-in'));
+
+      const songs = [
+        { src: "ssVid.net--Jumping-Machine-跳楼机.mp3", img: "tiaolouji.jpg", title: "Jumping Machine", artist: "LBI" },
+        { src: "ssVid.net--生分-男版.mp3", img: "unnamed (11).jpg", title: "生分 (男版)", artist: "en" },
+        { src: "ssVid.net--放纵想念.mp3", img: "download (4).jpg", title: "放纵想念", artist: "LOFTTHESTAR" },
+        { src: "ssVid.net--四点的海棠花未眠.mp3", img: "images0.jpg", title: "四点的海棠", artist: "Artist" },
+        { src: "ssVid.net--素未谋面.mp3", img: "unnamed (17).jpg", title: "素未谋面", artist: "Artist" },
+        { src: "ssVid.net--察觉.mp3", img: "unnamed (13).jpg", title: "察觉", artist: "Artist" },
+        { src: "ssVid.net--鄭潤澤-你已把我的心磨平-你已把我的心磨平-把所有躁動都磨平-不知覺地傾聽-心裡反覆質疑-動態歌詞MV.mp3", img: "unnamed (14).jpg", title: "你已把我的心磨平", artist: "鄭潤澤" },
+        { src: "ssVid.net--可望不可及.mp3", img: "unnamed (16).jpg", title: "可望不可及", artist: "Artist" },
+        { src: "ssVid.net--城外.mp3", img: "unnamed (15).jpg", title: "城外", artist: "Artist" },
+        { src: "ssVid.net--完美折磨.mp3", img: "unnamed (18).jpg", title: "完美折磨", artist: "Artist" },
+        { src: "ssVid.net--都一样会走.mp3", img: "unnamed (19).jpg", title: "都一样会走", artist: "Artist" },
+        { src: "ssVid.net--愿某人.mp3", img: "unnamed (20).jpg", title: "愿某人", artist: "Artist" }
+      ];
+
+      const audio = document.getElementById('player');
+      const thumb = document.getElementById('songThumb');
+      const titleEl = document.getElementById('songTitle');
+      const artistEl = document.getElementById('songArtist');
+
+      let currentSong = 0;
+      function loadSong(i, autoplay = false) {
+        currentSong = (i + songs.length) % songs.length;
+        const s = songs[currentSong];
+        audio.src = s.src;
+        thumb.src = s.img;
+        titleEl.textContent = s.title || 'Unknown';
+        artistEl.textContent = s.artist || 'Unknown';
+        if (autoplay) {
+          if (!audioCtx) initAudio();
+          audio.play().catch(() => {});
+        }
+      }
+      loadSong(0, false); 
+
+      document.getElementById('nextSong').addEventListener('click', () => {
+        loadSong(currentSong + 1, false);
+      });
+      document.getElementById('prevSong').addEventListener('click', () => {
+        loadSong(currentSong - 1, false);
+      });
+
+      function togglePlayPause() {
         if (!audioCtx) initAudio();
-        if (audio.paused) audio.play();
-        else audio.pause();
-    }
-    
-    
-    const waveform = document.getElementById("waveform");
-    const barCount = 12;
-    let bars = [];
-    let barHeights = Array(barCount).fill(0);
-    let velocities = Array(barCount).fill(0);
-    
-    for (let i = 0; i < barCount; i++) {
-        const b = document.createElement("div");
-        b.classList.add("bar");
+        if (audio.paused) {
+          audio.play();
+        } else {
+          audio.pause();
+        }
+      }
+
+      const waveform = document.getElementById('waveform');
+      const barCount = 12;
+      const bars = [];
+      const barHeights = new Array(barCount).fill(0);
+      const velocities = new Array(barCount).fill(0);
+
+      for (let i = 0; i < barCount; i++) {
+        const b = document.createElement('div');
+        b.className = 'bar';
         waveform.appendChild(b);
         bars.push(b);
-    }
-    
-    let audioCtx = null;
-    let analyser = null;
-    let frequencyData = null;
-    
-    function initAudio() {
+      }
+
+      let audioCtx = null;
+      let analyser = null;
+      let frequencyData = null;
+
+      function initAudio() {
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         analyser = audioCtx.createAnalyser();
-        analyser.fftSize = 256;
-    
+        analyser.fftSize = 256; // 128 bins
+        analyser.smoothingTimeConstant = 0.6;
+
         const src = audioCtx.createMediaElementSource(audio);
         src.connect(analyser);
         analyser.connect(audioCtx.destination);
-    
+
         frequencyData = new Uint8Array(analyser.frequencyBinCount);
-    }
-    
-    function animateBars() {
+      }
+
+      function animateBars() {
         requestAnimationFrame(animateBars);
         if (!analyser) return;
-    
+
         analyser.getByteFrequencyData(frequencyData);
-        //Idk why some bars are dead i try to fix bug but nothing works :/
-        const binsPerBar = Math.floor(frequencyData.length / barCount);
-        
+
         for (let i = 0; i < barCount; i++) {
-
-            const start = i * binsPerBar;
-            const end = (i + 1) * binsPerBar;
-
-            let sum = 0;
-            let count = 0;
-
-            for (let j = start; j < end; j++) {
-                sum += frequencyData[j];
-                count++;
+          const start = Math.floor((i / barCount) * frequencyData.length);
+          const end = Math.floor(((i + 1) / barCount) * frequencyData.length);
+          let sum = 0;
+          let count = 0;
+          for (let j = start; j < end; j++) {
+            if (j >= 0 && j < frequencyData.length) {
+              sum += frequencyData[j];
+              count++;
             }
+          }
+          const volume = count ? sum / count : 0;
 
-            const volume = sum / Math.max(count, 1);
+          const maxHeight = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--bar-max')) || 40;
+          const target = (volume / 255) * maxHeight;
+          let current = barHeights[i];
 
-            const maxHeight = 40;
-            const target = (volume / 255) * maxHeight;
-            let current = barHeights[i];
+          const spring = 0.25;
+          const friction = 0.12;
+          const bounce = 0.3;
 
-            let spring = 0.25;
-            let friction = 0.12;
-            let bounce = 0.3;
+          if (target > current) velocities[i] += (target - current) * spring;
+          else {
+            velocities[i] -= (current - target) * friction;
+            velocities[i] += bounce;
+          }
 
-            if (target > current) velocities[i] += (target - current) * spring;
-            else {
-                velocities[i] -= (current - target) * friction;
-                velocities[i] += bounce;
-            }
+          velocities[i] *= 0.82;
+          current += velocities[i];
+          if (current < 0) current = 0;
 
-            velocities[i] *= 0.82;
-            current += velocities[i];
-
-            if (current < 0) current = 0;
-
-            barHeights[i] = current;
-            bars[i].style.height = current + "px";
+          barHeights[i] = current;
+          bars[i].style.height = Math.max(1, current) + 'px';
         }
-    }
-    
-    audio.onplay = () => {
-        thumb.classList.add("playing");
-        bars.forEach(b => b.classList.remove("paused"));
+      }
+
+      audio.addEventListener('play', () => {
+        thumb.classList.add('playing');
+        bars.forEach(b => b.classList.remove('paused'));
+        if (!audioCtx) initAudio();
         animateBars();
-    };
-    
-    audio.onpause = () => {
-        thumb.classList.remove("playing");
+      });
+
+      audio.addEventListener('pause', () => {
+        thumb.classList.remove('playing');
         bars.forEach((bar, i) => {
-            bar.style.setProperty("--current-height", barHeights[i] + "px");
-            bar.classList.add("paused");
+          bar.style.setProperty('--current-height', Math.max(1, barHeights[i]) + 'px');
+          bar.classList.add('paused');
         });
-    };
+      });
+
+      window.addEventListener('keydown', (e) => {
+        if (e.code === 'Space' && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
+          e.preventDefault();
+          togglePlayPause();
+        }
+      });
     </script>
   </body>
 </html>
