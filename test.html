@@ -1,13 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>test</title>
-<link type="image/png" rel="shortcut icon" href="favicon.png" id="favicon"/>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>test</title>
+    <link rel="shortcut icon" href="favicon.png" type="image/png" id="favicon" />
 
-<style>
-    body {
+    <style>
+      :root {
+        --bar-max: 40px;
+      }
+
+      body {
         margin: 0;
         height: 100vh;
         display: flex;
@@ -18,279 +22,346 @@
         font-family: -apple-system, BlinkMacSystemFont, "SF Pro", sans-serif;
         opacity: 0;
         transition: opacity 0.45s ease;
-    }
-    body.fade-in { opacity: 1; }
+        color: white;
+      }
+      body.fade-in {
+        opacity: 1;
+      }
 
-    p {
-        font-size: 1.1rem;
-        color: rgba(255,255,255,0.85);
-        margin-bottom: 30px;
-    }
-    .welcome-message {
+      .welcome-message {
         font-size: 1.7em;
         font-weight: 600;
         color: white;
-        margin-bottom: 25px;
-        text-shadow: 0 0 15px rgba(255,255,255,0.7);
+        margin: 18px 0;
+        text-shadow: 0 0 15px rgba(255, 255, 255, 0.7);
         backdrop-filter: blur(3px);
         padding: 12px 24px;
         border-radius: 14px;
-        background: rgba(0,0,0,0.3);
-        border: 1px solid rgba(255,255,255,0.2);
-    }
+        background: rgba(0, 0, 0, 0.3);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
 
-    .home-btn svg {
+      /* home icon */
+      .home-btn svg {
         position: absolute;
         top: 20px;
         right: 20px;
         fill: none;
         stroke: white;
         stroke-width: 2;
-        transition: transform 0.3s ease-out;
+        transition: transform 0.3s ease-out, box-shadow 0.3s ease-out;
+        border-radius: 50%;
+        box-shadow: 0 0 0px rgba(255, 255, 255, 0);
         cursor: pointer;
-    }
-    .home-btn:hover svg { transform: translateY(-2px); }
+        text-decoration: none;
+      }
+      .home-btn:hover svg {
+        transform: translateY(-2px);
+      }
 
-    #audioControls {
+      /* audio control container (top-left) */
+      #audioControls {
         position: absolute;
         top: 14px;
         left: 14px;
         display: flex;
-        align-items: center;
-        gap: 20px;
-    }
-    #songSelector {
+        flex-direction: column; /* stack: selector row on top, waveform below */
+        gap: 10px;
+        align-items: flex-start;
+        z-index: 50;
+      }
+
+      /* song selector row (arrows + thumb + meta) */
+      #songSelector {
         display: flex;
         align-items: center;
         gap: 10px;
-    }
+      }
 
-    .arrow {
-        font-size: 12px;
-        background: rgba(255,255,255,0.15);
-        border: 1px solid rgba(255,255,255,0.35);
-        backdrop-filter: blur(10px);
-        border-radius: 12px;
-        cursor: pointer;
-        width: 20px;
-        height: 40px;
+      .arrow {
+        font-size: 14px;
         color: white;
-        transition: 0.25s ease;
-    }
-    .arrow:hover {
-        background: rgba(255,255,255,0.25);
-        transform: translateY(-2px);
-    }
+        background: rgba(255,255,255,0.02);
+        border-radius: 8px;
+        cursor: pointer;
+        border: 1px solid rgba(255,255,255,0.05);
+        width: 34px;
+        height: 34px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: transform .15s ease;
+      }
+      .arrow:hover { transform: translateY(-3px); }
 
-    .thumbButton {
-        width: 40px;
-        height: 40px;
+      .thumbButton {
+        width: 56px;
+        height: 56px;
         border-radius: 12px;
         object-fit: cover;
         cursor: pointer;
-        border: 2px solid rgba(255,255,255,0.25);
-        box-shadow: 0 0 12px rgba(0,0,0,0.5);
-        transition: transform 0.15s ease, box-shadow 0.3s ease;
-    }
-    .thumbButton:active { transform: scale(0.92); }
-    .thumbButton.playing {
-        box-shadow: 0 0 18px rgba(255,255,255,0.6);
-    }
+        border: 2px solid rgba(255,255,255,0.18);
+        box-shadow: 0 6px 18px rgba(0,0,0,0.45);
+        transition: transform 0.15s ease, box-shadow 0.2s ease;
+        display: block;
+      }
+      .thumbButton:active { transform: scale(.96); }
+      .thumbButton.playing {
+        box-shadow: 0 10px 30px rgba(255,255,255,0.12), 0 6px 22px rgba(0,0,0,0.6);
+      }
 
-    /* Waveform */
-    #waveform {
+      /* meta (title + artist) */
+      .meta {
         display: flex;
-        gap: 3px;
-        height: 42px;
+        flex-direction: column;
+        gap: 2px;
+        margin-left: 6px;
+        min-width: 180px;
+      }
+      .meta .title {
+        font-weight: 600;
+        font-size: 0.95rem;
+        color: rgba(255,255,255,0.95);
+        letter-spacing: 0.2px;
+      }
+      .meta .artist {
+        font-size: 0.82rem;
+        color: rgba(255,255,255,0.7);
+      }
+
+      /* waveform sits under the selector row */
+      #waveform {
+        display: flex;
+        gap: 4px;
+        height: var(--bar-max);
         align-items: flex-end;
-    }
-    .bar {
-        width: 5px;
-        background: rgba(255,255,255,0.85);
+        width: calc(56px + 12px + 180px); /* align under selector visually */
+        padding-left: 6px;
+      }
+
+      .bar {
+        width: 6px;
+        background: rgba(255,255,255,0.88);
         border-radius: 10px;
-        transition: height 0.3s ease;
-    }
-    .bar.paused {
-        animation: fallBounce 0.4s ease-out forwards;
-    }
-    @keyframes fallBounce {
+        transition: height 0.22s cubic-bezier(.2,.9,.2,1);
+        height: 4px;
+      }
+      .bar.paused {
+        animation: fallBounce .36s ease-out forwards;
+      }
+      @keyframes fallBounce {
         0% { height: var(--current-height, 40px); }
         70% { height: 0; }
         100% { height: 0; }
-    }
-</style>
+      }
 
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-    document.body.classList.add("fade-in");
-});
+      /* responsive small screens */
+      @media (max-width:420px) {
+        .meta { display:none; }
+        #waveform { width: 140px; }
+        .thumbButton { width:48px; height:48px; }
+      }
+    </style>
+  </head>
 
-document.addEventListener("keydown", function(event) {
-    if ((event.ctrlKey || event.shiftKey) && event.key === "I") {
-        event.preventDefault();
-        alert("You're quite curious, eh?");
-    }
-    if ((event.ctrlKey || event.metaKey) && event.key === "U") {
-        event.preventDefault();
-        alert("You're quite curious, eh?");
-    }
-    if (event.key === "F12") {
-        event.preventDefault();
-        alert("You're quite curious, eh?");
-    }
-});
-</script>
+  <body>
+    <!-- audio element (required) -->
+    <audio id="player" preload="auto"></audio>
 
-</head>
-<body>
+    <!-- home icon -->
+    <a href="/" class="home-btn" aria-label="Home">
+      <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M13.9897 20.9982H19.0001V12H21.0001L12.0001 3L3.04309 12H5.00006V20.9982H10.0001M13.9897 20.9982L13.9988 14.0013C13.9994 13.4885 13.6139 13.0653 13.1167 13.0069L11.0001 13C10.4478 13 10.0001 13.4477 10.0001 14V20.9982M13.9897 20.9982H10.0001" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </a>
 
-<audio id="player" preload="auto"></audio>
+    <!-- audio controls top-left -->
+    <div id="audioControls">
+      <div id="songSelector">
+        <button id="prevSong" class="arrow" title="Previous">⏮</button>
 
-<a href="/" class="home-btn">
-<svg width="24" height="24" viewBox="0 0 24 24">
-<path d="M13.9897 20.9982H19.0001V12H21.0001L12.0001 3L3.04309 12H5.00006V20.9982H10.0001M13.9897 20.9982L13.9988 14.0013C13.9994 13.4885 13.6139 13.0653 13.1167 13.0069L11.0001 13C10.4478 13 10.0001 13.4477 10.0001 14V20.9982M13.9897 20.9982H10.0001"
-stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-</svg></a>
+        <!-- thumbnail becomes play/pause -->
+        <img id="songThumb" class="thumbButton" onclick="togglePlayPause()" alt="song cover">
 
-<div id="audioControls">
-    <div id="songSelector">
-        <button id="prevSong" class="arrow">❮</button>
-        <img id="songThumb" class="thumbButton" onclick="togglePlayPause()">
-        <button id="nextSong" class="arrow">❯</button>
+        <button id="nextSong" class="arrow" title="Next">⏭</button>
+
+        <!-- title + artist -->
+        <div class="meta" role="status" aria-live="polite">
+          <div class="title" id="songTitle">—</div>
+          <div class="artist" id="songArtist">—</div>
+        </div>
+      </div>
+
+      <!-- waveform positioned below -->
+      <div id="waveform" aria-hidden="true"></div>
     </div>
-    <div id="waveform"></div>
-</div>
 
-<div class="welcome-message">*✧･ﾟ:* Tian Hong (天紅) *✧･ﾟ:*</div>
+    <div class="welcome-message">*✧･ﾟ:* Tian Hong (天紅) *✧･ﾟ:*</div>
 
-<div class="welcome-message" style="animation-delay: 0.1s;">
-    <ul>
-        <p>「當我找到你時, 你就在我的懷裡...
-            <br> 我的心，我的愛，我的腦海...
-            <br> 我把你擁在懷裡...
-            <br> 我把你擁入懷中...
-            <br> 你成了我的靈魂，我的未來...」
-        </p>
-    </ul>
-</div>
+    <div class="welcome-message" style="animation-delay: 0.1s;">
+      <p>「當我找到你時, 你就在我的懷裡...
+        <br> 我的心，我的愛，我的腦海...
+        <br> 我把你擁在懷裡...
+        <br> 我把你擁入懷中...
+        <br> 你成了我的靈魂，我的未來...」</p>
+    </div>
 
-<script>
-const songs = [
-    { src: "ssVid.net--Jumping-Machine-跳楼机.mp3", img: "tiaolouji.jpg" },
-    { src: "ssVid.net--生分-男版.mp3", img: "unnamed (11).jpg" },
-    { src: "ssVid.net--放纵想念.mp3", img: "download (4).jpg" },
-    { src: "ssVid.net--四点的海棠花未眠.mp3", img: "images0.jpg" },
-    { src: "ssVid.net--可以不是你.mp3", img: "unnamed (12).jpg" },
-    { src: "ssVid.net--察觉.mp3", img: "unnamed (13).jpg"},
-    { src: "ssVid.net--鄭潤澤-你已把我的心磨平.mp3", img: "unnamed (14).jpg"},
-    { src: "ssVid.net--可望不可及.mp3", img: "unnamed (16).jpg"},
-    { src: "ssVid.net--城外.mp3", img: "unnamed (15).jpg"}
-];
+    <script>
+      // small DOM boot
+      document.addEventListener('DOMContentLoaded', () => document.body.classList.add('fade-in'));
 
-let currentSong = 0;
-const audio = document.getElementById("player");
-const thumb = document.getElementById("songThumb");
+      // SONG LIST: add title & artist strings
+      const songs = [
+        { src: "ssVid.net--Jumping-Machine-跳楼机.mp3", img: "tiaolouji.jpg", title: "Jumping Machine", artist: "Unknown" },
+        { src: "ssVid.net--生分-男版.mp3", img: "unnamed (11).jpg", title: "生分 (男版)", artist: "Artist" },
+        { src: "ssVid.net--放纵想念.mp3", img: "download (4).jpg", title: "放纵想念", artist: "Artist" },
+        { src: "ssVid.net--四点的海棠花未眠.mp3", img: "images0.jpg", title: "四点的海棠", artist: "Artist" },
+        { src: "ssVid.net--素未谋面.mp3", img: "unnamed (17).jpg", title: "素未谋面", artist: "Artist" },
+        { src: "ssVid.net--察觉.mp3", img: "unnamed (13).jpg", title: "察觉", artist: "Artist" },
+        { src: "ssVid.net--鄭潤澤-你已把我的心磨平-你已把我的心磨平-把所有躁動都磨平-不知覺地傾聽-心裡反覆質疑-動態歌詞MV.mp3", img: "unnamed (14).jpg", title: "你已把我的心磨平", artist: "鄭潤澤" },
+        { src: "ssVid.net--可望不可及.mp3", img: "unnamed (16).jpg", title: "可望不可及", artist: "Artist" },
+        { src: "ssVid.net--城外.mp3", img: "unnamed (15).jpg", title: "城外", artist: "Artist" },
+        { src: "ssVid.net--完美折磨.mp3", img: "unnamed (18).jpg", title: "完美折磨", artist: "Artist" },
+        { src: "ssVid.net--都一样会走.mp3", img: "unnamed (19).jpg", title: "都一样会走", artist: "Artist" },
+        { src: "ssVid.net--愿某人.mp3", img: "unnamed (20).jpg", title: "愿某人", artist: "Artist" }
+      ];
 
-function loadSong(i) {
-    currentSong = i;
-    audio.src = songs[i].src;
-    thumb.src = songs[i].img;
-}
-loadSong(0);
+      const audio = document.getElementById('player');
+      const thumb = document.getElementById('songThumb');
+      const titleEl = document.getElementById('songTitle');
+      const artistEl = document.getElementById('songArtist');
 
-document.getElementById("nextSong").onclick = () => {
-    currentSong = (currentSong + 1) % songs.length;
-    loadSong(currentSong);
-};
-document.getElementById("prevSong").onclick = () => {
-    currentSong = (currentSong - 1 + songs.length) % songs.length;
-    loadSong(currentSong);
-};
+      let currentSong = 0;
+      function loadSong(i, autoplay = false) {
+        currentSong = (i + songs.length) % songs.length;
+        const s = songs[currentSong];
+        audio.src = s.src;
+        thumb.src = s.img;
+        titleEl.textContent = s.title || 'Unknown';
+        artistEl.textContent = s.artist || 'Unknown';
+        // do not autoplay unless requested
+        if (autoplay) {
+          // ensure audio context initialization later on play
+          if (!audioCtx) initAudio();
+          audio.play().catch(() => {});
+        }
+      }
+      loadSong(0, false); // load first song but don't autoplay
 
-function togglePlayPause() {
-    if (!audioCtx) initAudio();
-    if (audio.paused) audio.play();
-    else audio.pause();
-}
+      document.getElementById('nextSong').addEventListener('click', () => {
+        loadSong(currentSong + 1, false);
+      });
+      document.getElementById('prevSong').addEventListener('click', () => {
+        loadSong(currentSong - 1, false);
+      });
 
-const waveform = document.getElementById("waveform");
-const barCount = 12;
-let bars = [];
-let barHeights = Array(barCount).fill(0);
-let velocities = Array(barCount).fill(0);
-
-for (let i = 0; i < barCount; i++) {
-    const b = document.createElement("div");
-    b.classList.add("bar");
-    waveform.appendChild(b);
-    bars.push(b);
-}
-
-let audioCtx = null;
-let analyser = null;
-let frequencyData = null;
-
-function initAudio() {
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    analyser = audioCtx.createAnalyser();
-    analyser.fftSize = 256;
-    analyser.smoothingTimeConstant = 0.75;
-
-    const src = audioCtx.createMediaElementSource(audio);
-    src.connect(analyser);
-    analyser.connect(audioCtx.destination);
-
-    frequencyData = new Uint8Array(analyser.frequencyBinCount);
-}
-
-function animateBars() {
-    requestAnimationFrame(animateBars);
-    if (!analyser) return;
-
-    analyser.getByteFrequencyData(frequencyData);
-
-    for (let i = 0; i < barCount; i++) {
-        let index = Math.floor(i * (frequencyData.length / barCount));
-        let volume = frequencyData[index];
-
-        const maxHeight = 40;
-        const target = (volume / 255) * maxHeight;
-
-        let current = barHeights[i];
-        let spring = 0.23;
-        let friction = 0.12;
-        let bounce = 0.32;
-
-        if (target > current) {
-            velocities[i] += (target - current) * spring;
+      function togglePlayPause() {
+        if (!audioCtx) initAudio();
+        if (audio.paused) {
+          audio.play();
         } else {
+          audio.pause();
+        }
+      }
+
+      // --- waveform setup ---
+      const waveform = document.getElementById('waveform');
+      const barCount = 12;
+      const bars = [];
+      const barHeights = new Array(barCount).fill(0);
+      const velocities = new Array(barCount).fill(0);
+
+      for (let i = 0; i < barCount; i++) {
+        const b = document.createElement('div');
+        b.className = 'bar';
+        waveform.appendChild(b);
+        bars.push(b);
+      }
+
+      let audioCtx = null;
+      let analyser = null;
+      let frequencyData = null;
+
+      function initAudio() {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        analyser = audioCtx.createAnalyser();
+        analyser.fftSize = 256; // 128 bins
+        analyser.smoothingTimeConstant = 0.6;
+
+        const src = audioCtx.createMediaElementSource(audio);
+        src.connect(analyser);
+        analyser.connect(audioCtx.destination);
+
+        frequencyData = new Uint8Array(analyser.frequencyBinCount);
+      }
+
+      function animateBars() {
+        requestAnimationFrame(animateBars);
+        if (!analyser) return;
+
+        analyser.getByteFrequencyData(frequencyData);
+
+        // proportional mapping: each bar gets a proportional section of the spectrum
+        for (let i = 0; i < barCount; i++) {
+          const start = Math.floor((i / barCount) * frequencyData.length);
+          const end = Math.floor(((i + 1) / barCount) * frequencyData.length);
+          let sum = 0;
+          let count = 0;
+          for (let j = start; j < end; j++) {
+            if (j >= 0 && j < frequencyData.length) {
+              sum += frequencyData[j];
+              count++;
+            }
+          }
+          const volume = count ? sum / count : 0;
+
+          const maxHeight = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--bar-max')) || 40;
+          const target = (volume / 255) * maxHeight;
+          let current = barHeights[i];
+
+          // physics parameters
+          const spring = 0.25;
+          const friction = 0.12;
+          const bounce = 0.3;
+
+          if (target > current) velocities[i] += (target - current) * spring;
+          else {
             velocities[i] -= (current - target) * friction;
             velocities[i] += bounce;
+          }
+
+          velocities[i] *= 0.82;
+          current += velocities[i];
+          if (current < 0) current = 0;
+
+          barHeights[i] = current;
+          bars[i].style.height = Math.max(1, current) + 'px';
         }
+      }
 
-        velocities[i] *= 0.82;
-        current += velocities[i];
-        if (current < 0) current = 0;
+      audio.addEventListener('play', () => {
+        thumb.classList.add('playing');
+        bars.forEach(b => b.classList.remove('paused'));
+        // start animation loop
+        if (!audioCtx) initAudio();
+        animateBars();
+      });
 
-        barHeights[i] = current;
-        bars[i].style.height = current + "px";
-    }
-}
+      audio.addEventListener('pause', () => {
+        thumb.classList.remove('playing');
+        bars.forEach((bar, i) => {
+          bar.style.setProperty('--current-height', Math.max(1, barHeights[i]) + 'px');
+          bar.classList.add('paused');
+        });
+      });
 
-audio.onplay = () => {
-    thumb.classList.add("playing");
-    bars.forEach(b => b.classList.remove("paused"));
-    animateBars();
-};
-
-audio.onpause = () => {
-    thumb.classList.remove("playing");
-    bars.forEach((bar, i) => {
-        bar.style.setProperty("--current-height", barHeights[i] + "px");
-        bar.classList.add("paused");
-    });
-};
-</script>
-
-</body>
+      // accessibility: space toggles play/pause
+      window.addEventListener('keydown', (e) => {
+        if (e.code === 'Space' && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
+          e.preventDefault();
+          togglePlayPause();
+        }
+      });
+    </script>
+  </body>
 </html>
