@@ -1,373 +1,165 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>test</title>
-    <link rel="shortcut icon" href="favicon.png" type="image/png" id="favicon" />
-
-    <style>
-      :root {
-        --bar-max: 40px;
-      }
-
-      body {
+<head>
+<meta charset="UTF-8">
+<title>Audio Visualizer</title>
+<style>
+    body {
         margin: 0;
-        height: 100vh;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        background: url("background.gif") center/cover no-repeat;
-        font-family: -apple-system, BlinkMacSystemFont, "SF Pro", sans-serif;
-        opacity: 0;
-        transition: opacity 0.45s ease;
+        background: #0e0e0e;
+        font-family: Arial, sans-serif;
         color: white;
-      }
-      body.fade-in {
-        opacity: 1;
-      }
-      p {
-          font-size: 1.1rem;
-          color: rgba(255,255,255,0.85);
-          margin-bottom: 30px;
-      }
-      .welcome-message {
-        font-size: 1.7em;
-        font-weight: 600;
-        color: white;
-        margin: 18px 0;
-        text-shadow: 0 0 15px rgba(255, 255, 255, 0.7);
-        backdrop-filter: blur(3px);
-        padding: 12px 24px;
-        border-radius: 14px;
-        background: rgba(0, 0, 0, 0.3);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-      }
+        overflow-x: hidden;
+    }
 
-      /* home icon */
-      .home-btn svg {
-        position: absolute;
-        top: 20px;
-        right: 20px;
-        fill: none;
-        stroke: white;
-        stroke-width: 2;
-        transition: transform 0.3s ease-out, box-shadow 0.3s ease-out;
-        border-radius: 50%;
-        box-shadow: 0 0 0px rgba(255, 255, 255, 0);
-        cursor: pointer;
-        text-decoration: none;
-      }
-      .home-btn:hover svg {
-        transform: translateY(-2px);
-      }
-
-      /* audio control container (top-left) */
-      #audioControls {
-        position: absolute;
-        top: 14px;
-        left: 14px;
-        display: flex;
-        flex-direction: column; /* stack: selector row on top, waveform below */
-        gap: 10px;
-        align-items: flex-start;
-        z-index: 50;
-      }
-
-      /* song selector row (arrows + thumb + meta) */
-      #songSelector {
+    .container {
         display: flex;
         align-items: center;
-        gap: 10px;
-      }
+        gap: 20px;
+        padding: 20px;
+    }
 
-      .arrow {
-        font-size: 14px;
-        color: white;
-        background: rgba(255,255,255,0);
-        border-radius: 8px;
-        cursor: pointer;
-        border: 1px solid rgba(255,255,255,0);
-        width: 20px;
-        height: 20px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        transition: transform .15s ease;
-      }
-      .arrow:hover { transform: translateY(-3px); }
-
-      .thumbButton {
-        width: 40px;
-        height: 40px;
-        border-radius: 12px;
+    .thumb {
+        width: 120px;
+        height: 120px;
+        border-radius: 15px;
         object-fit: cover;
         cursor: pointer;
-        border: 2px solid rgba(255,255,255,0.18);
-        box-shadow: 0 6px 18px rgba(0,0,0,0.45);
-        transition: transform 0.15s ease, box-shadow 0.2s ease;
-        display: block;
-      }
-      .thumbButton:active { transform: scale(.96); }
-      .thumbButton.playing {
-        box-shadow: 0 10px 30px rgba(255,255,255,0.12), 0 6px 22px rgba(0,0,0,0.6);
-      }
+        transition: transform 0.2s ease;
+    }
 
-      /* meta (title + artist) */
-      .meta {
+    .thumb:hover {
+        transform: scale(1.05);
+    }
+
+    .title {
+        font-size: 24px;
+        font-weight: bold;
+        letter-spacing: 0.5px;
+    }
+
+    /* Waveform */
+    .waveform {
+        position: relative;
+        width: 100%;
+        height: 60px;
+        margin-top: 10px;
         display: flex;
-        flex-direction: column;
-        gap: 2px;
-        margin-left: 6px;
-        min-width: 180px;
-      }
-      .meta .title {
-        font-weight: 600;
-        font-size: 0.95rem;
-        color: rgba(255,255,255,0.95);
-        letter-spacing: 0.2px;
-      }
-      .meta .artist {
-        font-size: 0.82rem;
-        color: rgba(255,255,255,0.7);
-      }
+        justify-content: center;
+        gap: 4px;
+        transform: scaleY(-1); /* 🔥 Invert waveform vertically */
+    }
 
-      /* waveform sits under the selector row */
-      #waveform {
-        display: flex;
-        gap: 6px;
-        height: var(--bar-max);
-        align-items: flex-end;
-        width: calc(56px + 12px + 180px); /* align under selector visually */
-        padding-left: 6px;
-        transform: scaleY(-1);
-        margin-top: -10px;
-      }
-
-      .bar {
+    .bar {
         width: 6px;
-        background: rgba(255,255,255,0.88);
-        border-radius: 10px;
-        transition: height 0.22s cubic-bezier(.2,.9,.2,1);
-        height: 4px;
-      }
-      .bar.paused {
-        animation: fallBounce .36s ease-out forwards;
-      }
-      @keyframes fallBounce {
-        0% { height: var(--current-height, 40px); }
-        70% { height: 0; }
-        100% { height: 0; }
-      }
+        height: 40px;
+        background: #4da6ff;
+        border-radius: 3px;
+        transform-origin: top;
+        transition: height 0.1s ease;
+    }
+</style>
+</head>
+<body>
 
-      /* responsive small screens */
-      @media (max-width:420px) {
-        .meta { display:none; }
-        #waveform { width: 140px; }
-        .thumbButton { width:48px; height:48px; }
-      }
-    </style>
-  </head>
+<div class="container">
+    <img id="thumb" class="thumb" src="thumb1.jpg" onclick="togglePlay()">
+    <div class="title" id="songTitle">Song 1</div>
+</div>
 
-  <body>
-    <!-- audio element (required) -->
-    <audio id="player" preload="auto"></audio>
+<!-- Centered waveform -->
+<div class="waveform" id="waveform"></div>
 
-    <!-- home icon -->
-    <a href="/" class="home-btn" aria-label="Home">
-      <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-        <path d="M13.9897 20.9982H19.0001V12H21.0001L12.0001 3L3.04309 12H5.00006V20.9982H10.0001M13.9897 20.9982L13.9988 14.0013C13.9994 13.4885 13.6139 13.0653 13.1167 13.0069L11.0001 13C10.4478 13 10.0001 13.4477 10.0001 14V20.9982M13.9897 20.9982H10.0001" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-    </a>
+<audio id="audio" src="song1.mp3"></audio>
 
-    <!-- audio controls top-left -->
-    <div id="audioControls">
-      <div id="songSelector">
-        <button id="prevSong" class="arrow" title="Previous">⇦</button>
+<script>
+/* --------------------
+   SONG SELECTION SYSTEM
+-----------------------*/
+let songs = [
+    { title: "凄美地- 郭顶", file: "ssVid.net--The-Fog-Space.mp3", img: "unnamed (22).jpg" },
+    { title: "Song 2", file: "song2.mp3", img: "thumb2.jpg" },
+    { title: "Song 3", file: "song3.mp3", img: "thumb3.jpg" }
+];
 
-        <!-- thumbnail becomes play/pause -->
-        <img id="songThumb" class="thumbButton" onclick="togglePlayPause()" alt="song cover">
+let index = 0;
+let audio = document.getElementById("audio");
+let thumb = document.getElementById("thumb");
+let titleBox = document.getElementById("songTitle");
 
-        <button id="nextSong" class="arrow" title="Next">⇨</button>
+function loadSong(i) {
+    index = i;
+    audio.src = songs[i].file;
+    thumb.src = songs[i].img;
+    titleBox.textContent = songs[i].title;
+}
 
-        <!-- title + artist -->
-        <div class="meta" role="status" aria-live="polite">
-          <div class="title" id="songTitle">—</div>
-          <div class="artist" id="songArtist">—</div>
-        </div>
-      </div>
+loadSong(0); // no autoplay
 
-      <!-- waveform positioned below -->
-      <div id="waveform" aria-hidden="true"></div>
-    </div>
+/* --------------------
+   PLAY / PAUSE (thumbnail button)
+-----------------------*/
+function togglePlay() {
+    if (audio.paused) {
+        audio.play();
+    } else {
+        audio.pause();
+    }
+}
 
-    <div class="welcome-message">*✧･ﾟ:* Tian Hong (天紅) *✧･ﾟ:*</div>
+/* --------------------
+   WAVEFORM SETUP
+-----------------------*/
+const BAR_COUNT = 32;   // all bars move now
+const MAX_HEIGHT = 40;  // bar height limit
 
-    <div class="welcome-message" style="animation-delay: 0.1s;">
-      <p>「當我找到你時, 你就在我的懷裡...
-        <br> 我的心，我的愛，我的腦海...
-        <br> 我把你擁在懷裡...
-        <br> 我把你擁入懷中...
-        <br> 你成了我的靈魂，我的未來...」</p>
-    </div>
+const waveform = document.getElementById("waveform");
+let bars = [];
 
-    <script>
-      // small DOM boot
-      document.addEventListener('DOMContentLoaded', () => document.body.classList.add('fade-in'));
+for (let i = 0; i < BAR_COUNT; i++) {
+    let bar = document.createElement("div");
+    bar.classList.add("bar");
+    waveform.appendChild(bar);
+    bars.push(bar);
+}
 
-      // SONG LIST: add title & artist strings
-      const songs = [
-        { src: "ssVid.net--Jumping-Machine-跳楼机.mp3", img: "tiaolouji.jpg", title: "Jumping Machine", artist: "Unknown" },
-        { src: "ssVid.net--生分-男版.mp3", img: "unnamed (11).jpg", title: "生分 (男版)", artist: "Artist" },
-        { src: "ssVid.net--放纵想念.mp3", img: "download (4).jpg", title: "放纵想念", artist: "Artist" },
-        { src: "ssVid.net--四点的海棠花未眠.mp3", img: "images0.jpg", title: "四点的海棠", artist: "Artist" },
-        { src: "ssVid.net--素未谋面.mp3", img: "unnamed (17).jpg", title: "素未谋面", artist: "Artist" },
-        { src: "ssVid.net--察觉.mp3", img: "unnamed (13).jpg", title: "察觉", artist: "Artist" },
-        { src: "ssVid.net--鄭潤澤-你已把我的心磨平-你已把我的心磨平-把所有躁動都磨平-不知覺地傾聽-心裡反覆質疑-動態歌詞MV.mp3", img: "unnamed (14).jpg", title: "你已把我的心磨平", artist: "鄭潤澤" },
-        { src: "ssVid.net--可望不可及.mp3", img: "unnamed (16).jpg", title: "可望不可及", artist: "Artist" },
-        { src: "ssVid.net--城外.mp3", img: "unnamed (15).jpg", title: "城外", artist: "Artist" },
-        { src: "ssVid.net--完美折磨.mp3", img: "unnamed (18).jpg", title: "完美折磨", artist: "Artist" },
-        { src: "ssVid.net--都一样会走.mp3", img: "unnamed (19).jpg", title: "都一样会走", artist: "Artist" },
-        { src: "ssVid.net--愿某人.mp3", img: "unnamed (20).jpg", title: "愿某人", artist: "Artist" }
-      ];
+/* Audio Analyser */
+let ctx = new AudioContext();
+let src = ctx.createMediaElementSource(audio);
+let analyser = ctx.createAnalyser();
+analyser.fftSize = 128; // smaller = smoother bars
 
-      const audio = document.getElementById('player');
-      const thumb = document.getElementById('songThumb');
-      const titleEl = document.getElementById('songTitle');
-      const artistEl = document.getElementById('songArtist');
+src.connect(analyser);
+analyser.connect(ctx.destination);
 
-      let currentSong = 0;
-      function loadSong(i, autoplay = false) {
-        currentSong = (i + songs.length) % songs.length;
-        const s = songs[currentSong];
-        audio.src = s.src;
-        thumb.src = s.img;
-        titleEl.textContent = s.title || 'Unknown';
-        artistEl.textContent = s.artist || 'Unknown';
-        // do not autoplay unless requested
-        if (autoplay) {
-          // ensure audio context initialization later on play
-          if (!audioCtx) initAudio();
-          audio.play().catch(() => {});
-        }
-      }
-      loadSong(0, false); // load first song but don't autoplay
+let buffer = new Uint8Array(analyser.frequencyBinCount);
 
-      document.getElementById('nextSong').addEventListener('click', () => {
-        loadSong(currentSong + 1, false);
-      });
-      document.getElementById('prevSong').addEventListener('click', () => {
-        loadSong(currentSong - 1, false);
-      });
+/* --------------------
+   ANIMATION LOOP
+-----------------------*/
+function animate() {
+    requestAnimationFrame(animate);
 
-      function togglePlayPause() {
-        if (!audioCtx) initAudio();
-        if (audio.paused) {
-          audio.play();
-        } else {
-          audio.pause();
-        }
-      }
+    analyser.getByteFrequencyData(buffer);
 
-      // --- waveform setup ---
-      const waveform = document.getElementById('waveform');
-      const barCount = 12;
-      const bars = [];
-      const barHeights = new Array(barCount).fill(0);
-      const velocities = new Array(barCount).fill(0);
+    for (let i = 0; i < BAR_COUNT; i++) {
+        let v = buffer[i] / 255;
+        let h = v * MAX_HEIGHT;
 
-      for (let i = 0; i < barCount; i++) {
-        const b = document.createElement('div');
-        b.className = 'bar';
-        waveform.appendChild(b);
-        bars.push(b);
-      }
+        // dead-bar fix: if super quiet, apply tiny noise
+        if (h < 2) h = Math.random() * 2;
 
-      let audioCtx = null;
-      let analyser = null;
-      let frequencyData = null;
+        bars[i].style.height = h + "px";
+    }
+}
 
-      function initAudio() {
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        analyser = audioCtx.createAnalyser();
-        analyser.fftSize = 256; // 128 bins
-        analyser.smoothingTimeConstant = 0.6;
+animate();
 
-        const src = audioCtx.createMediaElementSource(audio);
-        src.connect(analyser);
-        analyser.connect(audioCtx.destination);
+/* unlock audio on first interaction (mobile fix) */
+document.body.onclick = () => {
+    if (ctx.state === "suspended") ctx.resume();
+};
+</script>
 
-        frequencyData = new Uint8Array(analyser.frequencyBinCount);
-      }
-
-      function animateBars() {
-        requestAnimationFrame(animateBars);
-        if (!analyser) return;
-
-        analyser.getByteFrequencyData(frequencyData);
-
-        // proportional mapping: each bar gets a proportional section of the spectrum
-        for (let i = 0; i < barCount; i++) {
-          const start = Math.floor((i / barCount) * frequencyData.length);
-          const end = Math.floor(((i + 1) / barCount) * frequencyData.length);
-          let sum = 0;
-          let count = 0;
-          for (let j = start; j < end; j++) {
-            if (j >= 0 && j < frequencyData.length) {
-              sum += frequencyData[j];
-              count++;
-            }
-          }
-          const volume = count ? sum / count : 0;
-
-          const maxHeight = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--bar-max')) || 40;
-          const target = (volume / 255) * maxHeight;
-          let current = barHeights[i];
-
-          // physics parameters
-          const spring = 0.25;
-          const friction = 0.12;
-          const bounce = 0.3;
-
-          if (target > current) velocities[i] += (target - current) * spring;
-          else {
-            velocities[i] -= (current - target) * friction;
-            velocities[i] += bounce;
-          }
-
-          velocities[i] *= 0.82;
-          current += velocities[i];
-          if (current < 0) current = 0;
-
-          barHeights[i] = current;
-          bars[i].style.height = Math.max(1, current) + 'px';
-        }
-      }
-
-      audio.addEventListener('play', () => {
-        thumb.classList.add('playing');
-        bars.forEach(b => b.classList.remove('paused'));
-        // start animation loop
-        if (!audioCtx) initAudio();
-        animateBars();
-      });
-
-      audio.addEventListener('pause', () => {
-        thumb.classList.remove('playing');
-        bars.forEach((bar, i) => {
-          bar.style.setProperty('--current-height', Math.max(1, barHeights[i]) + 'px');
-          bar.classList.add('paused');
-        });
-      });
-
-      // accessibility: space toggles play/pause
-      window.addEventListener('keydown', (e) => {
-        if (e.code === 'Space' && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
-          e.preventDefault();
-          togglePlayPause();
-        }
-      });
-    </script>
-  </body>
+</body>
 </html>
