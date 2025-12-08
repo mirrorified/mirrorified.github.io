@@ -276,7 +276,7 @@
       function initAudio() {
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         analyser = audioCtx.createAnalyser();
-        analyser.fftSize = 2048; // 512 bins
+        analyser.fftSize = 1024; // 512 bins
         analyser.smoothingTimeConstant = 0.6;
 
         const src = audioCtx.createMediaElementSource(audio);
