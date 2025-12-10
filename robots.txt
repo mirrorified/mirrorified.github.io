@@ -1,5 +1,7 @@
 User-agent: Googlebot
 Allow: /
+Sitemap: https://staria-1k.github.io
 
 User-agent: Googlebot-Image
 Allow: /
+Sitemap: https://staria-1k.github.io
