@@ -1,7 +1,7 @@
 User-agent: Googlebot
 Allow: /
-Sitemap: https://staria-1k.github.io/sitemap.xml
+Sitemap: https://mirrorified.github.io/sitemap.xml
 
 User-agent: Googlebot-Image
 Allow: /
-Sitemap: https://staria-1k.github.io/sitemap.xml
+Sitemap: https://mirrorified.github.io/sitemap.xml
