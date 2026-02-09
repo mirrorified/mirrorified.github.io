@@ -18,7 +18,7 @@
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        background: url("background.gif") center/cover no-repeat;
+        background: url("windowsbackground.gif") center/cover no-repeat;
         font-family: -apple-system, BlinkMacSystemFont, "SF Pro", sans-serif;
         opacity: 0;
         transition: opacity 0.45s ease;
