@@ -1,409 +1,331 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
+  <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>TianHong - Windows Aero</title>
     <link rel="shortcut icon" href="favicon.png" type="image/png" id="favicon" />
 
     <style>
-        :root {
-            --bar-max: 40px;
-            /* Aero Color Palette */
-            --aero-glass: rgba(255, 255, 255, 0.15);
-            --aero-border: rgba(255, 255, 255, 0.4);
-            --aero-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-            --aero-text: #ffffff;
-        }
+      :root {
+        /* Authentic Windows 7 Palette */
+        --aero-base: rgba(160, 200, 240, 0.25);
+        --aero-border-outer: rgba(0, 0, 0, 0.3);
+        --aero-border-inner: rgba(255, 255, 255, 0.4);
+        --aero-shine: linear-gradient(180deg, 
+            rgba(255,255,255,0.5) 0%, 
+            rgba(255,255,255,0.1) 45%, 
+            rgba(255,255,255,0.0) 50%, 
+            rgba(255,255,255,0.1) 100%);
+        --aero-text: #ffffff;
+      }
 
-        body {
-            margin: 0;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            /* Classic Windows Vista/7 aesthetic background */
-            background: url("backgroundwindows.jpg") center/cover no-repeat;
-            background-attachment: fixed;
-            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-            opacity: 0;
-            transition: opacity 0.8s ease;
-            color: var(--aero-text);
-            overflow: hidden;
-        }
+      body {
+        margin: 0;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background: url("https://mirrorified.github.io/backgroundwindows.jpg") center/cover no-repeat;
+        background-attachment: fixed;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        opacity: 0;
+        transition: opacity 0.8s ease;
+        color: var(--aero-text);
+        overflow: hidden;
+      }
 
-        body.fade-in {
-            opacity: 1;
-        }
+      body.fade-in { opacity: 1; }
 
-        /* Aero Glass Effect Container */
-        .glass-panel {
-            background: var(--aero-glass);
-            backdrop-filter: blur(15px) saturate(150%);
-            -webkit-backdrop-filter: blur(15px) saturate(150%);
-            border: 1px solid var(--aero-border);
-            border-radius: 12px;
-            box-shadow: var(--aero-shadow);
-            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2);
-        }
+      /* Combined Aero Glass Effect */
+      .glass-panel {
+        position: relative;
+        background: var(--aero-base);
+        backdrop-filter: blur(20px) saturate(150%);
+        -webkit-backdrop-filter: blur(20px) saturate(150%);
+        
+        border: 1px solid var(--aero-border-outer);
+        box-shadow: 
+            inset 0 0 0 1px var(--aero-border-inner),
+            0 10px 30px rgba(0,0,0,0.5);
+        
+        border-radius: 12px;
+        overflow: hidden;
+        transition: all .25s cubic-bezier(0.52, 0.76, 0.52, 0.76);
+      }
 
-        .welcome-message {
-            font-size: 1.5em;
-            font-weight: 500;
-            margin: 15px 0;
-            padding: 20px 40px;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-            text-align: center;
-        }
+      /* The Aero "Shine" Layer */
+      .glass-panel::before {
+        content: "";
+        position: absolute;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: var(--aero-shine);
+        pointer-events: none;
+        z-index: 1;
+      }
 
-        p {
-            font-size: 1rem;
-            color: rgba(255, 255, 255, 0.9);
-            margin: 0;
-            line-height: 1.6;
-        }
+      .welcome-message {
+        font-size: 1.5em;
+        font-weight: 500;
+        margin: 15px 0;
+        padding: 20px 40px;
+        text-shadow: 0 0 10px rgba(255,255,255,0.5), 0 1px 2px rgba(0,0,0,0.7);
+        text-align: center;
+        z-index: 2;
+        position: relative;
+      }
 
-        /* Home Button Aero style */
-        .home-btn svg {
-            position: absolute;
-            top: 25px;
-            right: 25px;
-            padding: 8px;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(5px);
-            border: 1px solid var(--aero-border);
-            border-radius: 8px;
-            transition: all 0.3s;
-        }
+      p {
+        font-size: 1rem;
+        color: rgba(255,255,255,0.9);
+        margin: 0;
+        line-height: 1.6;
+        padding: 10px 20px;
+        position: relative;
+        z-index: 2;
+        text-shadow: 0 1px 3px rgba(0,0,0,0.9);
+      }
 
-        .home-btn:hover svg {
-            background: rgba(255, 255, 255, 0.25);
-            transform: scale(1.1);
-        }
+      /* Home Button */
+      .home-btn svg {
+        position: absolute;
+        top: 25px;
+        right: 25px;
+        padding: 8px;
+        background: rgba(255,255,255,0.1);
+        backdrop-filter: blur(5px);
+        border: 1px solid var(--aero-border-inner);
+        border-radius: 8px;
+        transition: all 0.3s;
+        z-index: 10;
+      }
+      .home-btn:hover svg {
+        background: rgba(255,255,255,0.25);
+        transform: scale(1.1);
+      }
 
-        /* Audio Controls */
-        #audioControls {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            padding: 12px;
-            z-index: 50;
-        }
+      /* Audio Controls */
+      #audioControls {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        padding: 12px;
+        z-index: 50;
+      }
 
-        #songSelector {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
+      #songSelector {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        position: relative;
+        z-index: 2;
+      }
 
-        .arrow {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid var(--aero-border);
-            color: white;
-            border-radius: 4px;
-            cursor: pointer;
-            padding: 5px 10px;
-            transition: background 0.2s;
-        }
+      .arrow {
+        background: rgba(255,255,255,0.1);
+        border: 1px solid var(--aero-border-inner);
+        color: white;
+        border-radius: 4px;
+        cursor: pointer;
+        padding: 5px 10px;
+        transition: background 0.2s;
+      }
+      .arrow:hover { background: rgba(255,255,255,0.3); }
 
-        .arrow:hover {
-            background: rgba(255, 255, 255, 0.3);
-        }
+      .thumbButton {
+        width: 50px;
+        height: 50px;
+        border-radius: 6px;
+        border: 2px solid white;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        cursor: pointer;
+      }
 
-        .thumbButton {
-            width: 50px;
-            height: 50px;
-            border-radius: 6px;
-            border: 2px solid white;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-            cursor: pointer;
-        }
+      .meta .title { font-weight: 700; font-size: 0.95rem; }
+      .meta .artist { font-size: 0.8rem; opacity: 0.8; }
 
-        .meta .title {
-            font-weight: 700;
-            font-size: 0.95rem;
-        }
+      /* Waveform */
+      #waveform {
+        display: flex;
+        gap: 4px;
+        height: 30px;
+        margin-top: 10px;
+        align-items: flex-end;
+        transform: scaleY(-1);
+        position: relative;
+        z-index: 2;
+      }
+      .bar {
+        width: 4px;
+        background: rgba(255,255,255,0.8);
+        border-radius: 2px;
+      }
 
-        .meta .artist {
-            font-size: 0.8rem;
-            opacity: 0.8;
-        }
+      /* Popup Styling */
+      .promo-popup {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.3);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+      }
 
-        /* Waveform */
-        #waveform {
-            display: flex;
-            gap: 4px;
-            height: 30px;
-            margin-top: 10px;
-            align-items: flex-end;
-            transform: scaleY(-1);
-        }
+      .promo-card {
+        width: 350px;
+        padding: 30px;
+        text-align: center;
+        position: relative;
+        animation: aeroPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      }
 
-        .bar {
-            width: 4px;
-            background: rgba(255, 255, 255, 0.8);
-            border-radius: 2px;
-        }
+      @keyframes aeroPop {
+        from { transform: scale(0.8); opacity: 0; }
+        to { transform: scale(1); opacity: 1; }
+      }
 
-        /* Popup Styling */
-        .promo-popup {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.3);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-        }
-
-        .promo-card {
-            width: 350px;
-            padding: 30px;
-            text-align: center;
-            position: relative;
-            animation: aeroPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        @keyframes aeroPop {
-            from {
-                transform: scale(0.8);
-                opacity: 0;
-            }
-
-            to {
-                transform: scale(1);
-                opacity: 1;
-            }
-        }
-
-        .promo-card h3 {
-            margin-top: 0;
-            color: #fff;
-        }
-
-        .promo-card a {
-            color: #80dfff;
-            text-decoration: none;
-            font-weight: bold;
-        }
-
-        .promo-close {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: rgba(200, 50, 50, 0.8);
-            border: 1px solid white;
-            color: white;
-            cursor: pointer;
-            border-radius: 3px;
-        }
+      .promo-card h3 { margin-top: 0; color: #fff; position: relative; z-index: 2; }
+      .promo-card p { position: relative; z-index: 2; }
+      .promo-card a { color: #80dfff; text-decoration: none; font-weight: bold; }
+      
+      .promo-close {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: rgba(200, 50, 50, 0.8);
+        border: 1px solid white;
+        color: white;
+        cursor: pointer;
+        border-radius: 3px;
+        z-index: 10;
+      }
     </style>
-</head>
+  </head>
 
-<body>
+  <body>
     <audio id="player" preload="auto"></audio>
 
     <a href="/" class="home-btn" aria-label="Home">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
-            <path d="M3 12l9-9 9 9M5 10v10a1 1 0 001 1h3a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1h3a1 1 0 001-1V10" />
-        </svg>
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+        <path d="M3 12l9-9 9 9M5 10v10a1 1 0 001 1h3a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1h3a1 1 0 001-1V10" />
+      </svg>
     </a>
 
     <div id="audioControls" class="glass-panel">
-        <div id="songSelector">
-            <button id="prevSong" class="arrow">❮</button>
-            <img id="songThumb" class="thumbButton" onclick="togglePlayPause()" alt="cover">
-            <button id="nextSong" class="arrow">❯</button>
-            <div class="meta">
-                <div class="title" id="songTitle">—</div>
-                <div class="artist" id="songArtist">—</div>
-            </div>
+      <div id="songSelector">
+        <button id="prevSong" class="arrow">❮</button>
+        <img id="songThumb" class="thumbButton" onclick="togglePlayPause()" alt="cover">
+        <button id="nextSong" class="arrow">❯</button>
+        <div class="meta">
+          <div class="title" id="songTitle">—</div>
+          <div class="artist" id="songArtist">—</div>
         </div>
-        <div id="waveform"></div>
+      </div>
+      <div id="waveform"></div>
     </div>
 
     <div class="welcome-message glass-panel">
-        *✧･ﾟ:* Tian Hong (天紅) *✧･ﾟ:*
+      *✧･ﾟ:* Tian Hong (天紅) *✧･ﾟ:*
     </div>
 
-    <div class="welcome-message glass-panel">
-        <p>「當我找到你時, 你就在我的懷裡...<br>
-            我的心，我的愛，我的腦海...<br>
-            我把你擁在懷裡... 我把你擁入懷中...<br>
-            你成了我的靈魂，我的未來...」</p>
+    <div class="glass-panel" style="margin-top: 20px; max-width: 80%;">
+      <p>「當我找到你時, 你就在我的懷裡...<br>
+         我的心，我的愛，我的腦海...<br>
+         我把你擁在懷裡... 我把你擁入懷中...<br>
+         你成了我的靈魂，我的未來...」</p>
     </div>
 
     <div id="promo-popup" class="promo-popup">
-        <div class="promo-card glass-panel">
-            <button class="promo-close" onclick="closePromo()">✕</button>
-            <h3>System Announcement</h3>
-            <p>Redirecting to staria in <span id="countdown">15</span>s...<br><br>
-                <a href="https://staria-moonflower.vercel.app" target="_blank">staria-moonflower.vercel.app</a>
-            </p>
-        </div>
+      <div class="promo-card glass-panel">
+        <button class="promo-close" onclick="closePromo()">✕</button>
+        <h3>System Announcement</h3>
+        <p>As of December 2025, this webiste is under renovation You will be redirected to my new site in in <span id="countdown">15</span>s...<br><br>
+          <a href="https://staria-moonflower.vercel.app" target="_blank">staria-moonflower.vercel.app</a>
+        </p>
+      </div>
     </div>
 
     <script>
-        let redirectTimer;
-        let countdownVal = 5;
+      let redirectTimer;
+      let countdownVal = 15;
 
-        document.addEventListener("DOMContentLoaded", () => {
-            document.body.classList.add('fade-in');
+      document.addEventListener("DOMContentLoaded", () => {
+        document.body.classList.add('fade-in');
+        
+        setTimeout(() => {
+          const popup = document.getElementById("promo-popup");
+          popup.style.display = "flex";
 
-            // Popup and Redirect Logic
-            setTimeout(() => {
-                const popup = document.getElementById("promo-popup");
-                popup.style.display = "flex";
+          redirectTimer = setTimeout(() => {
+            window.location.href = "https://staria-moonflower.vercel.app";
+          }, 5000);
 
-                // Start Redirect Timer (5 seconds)
-                redirectTimer = setTimeout(() => {
-                    window.location.href = "https://staria-moonflower.vercel.app";
-                }, 15000);
+          const countdownEl = document.getElementById('countdown');
+          const interval = setInterval(() => {
+            countdownVal--;
+            if(countdownVal >= 0) countdownEl.innerText = countdownVal;
+            if(countdownVal <= 0) clearInterval(interval);
+          }, 1000);
 
-                // Visual Countdown
-                const countdownEl = document.getElementById('countdown');
-                const interval = setInterval(() => {
-                    countdownVal--;
-                    if (countdownVal >= 0) countdownEl.innerText = countdownVal;
-                    if (countdownVal <= 0) clearInterval(interval);
-                }, 1000);
+        }, 800);
+      });
 
-            }, 800);
-        });
+      function closePromo() {
+        document.getElementById("promo-popup").style.display = "none";
+        clearTimeout(redirectTimer);
+      }
 
-        function closePromo() {
-            document.getElementById("promo-popup").style.display = "none";
-            clearTimeout(redirectTimer); // Stop the redirect
-            localStorage.setItem("promoSeen", "true");
-        }
+      const songs = [
+        { img: "2025120818531-ezgif.com-video-to-gif-converter.gif", title: "(Not Playing)", artist: "Use arrows to select songs" },
+        { src: "ssVid.net--Jumping-Machine-跳楼机.mp3", img: "tiaolouji.jpg", title: "跳樓機", artist: "LBI利比" },
+        { src: "ssVid.net--夜半.mp3", img: "unnamed (21).jpg", title:"夜半", artist:"王泽科"},
+        { src: "ssVid.net--生分-男版.mp3", img: "unnamed (11).jpg", title: "生分 (男版)", artist: "en" },
+        { src: "ssVid.net--放纵想念.mp3", img: "download (4).jpg", title: "放纵想念", artist: "刘思达" },
+        { src: "ssVid.net--四点的海棠花未眠.mp3", img: "images0.jpg", title: "四点的海棠", artist: "渡" },
+        { src: "ssVid.net--素未谋面.mp3", img: "unnamed (17).jpg", title: "素未谋面", artist: "王忻辰" },
+        { src: "ssVid.net--察觉.mp3", img: "unnamed (13).jpg", title: "察觉", artist: "音格概念 & 逸霄" },
+        { src: "ssVid.net--鄭潤澤-你已把我的心磨平-你已把我的心磨平-把所有躁動都磨平-不知覺地傾聽-心裡反覆質疑-動態歌詞MV.mp3", img: "unnamed (14).jpg", title: "你已把我的心磨平", artist: "鄭潤澤" },
+        { src: "ssVid.net--可望不可及.mp3", img: "unnamed (16).jpg", title: "可望不可及", artist: "黑崎子 & 单循" },
+        { src: "ssVid.net--城外.mp3", img: "unnamed (15).jpg", title: "城外", artist: "郑润泽" },
+        { src: "ssVid.net--完美折磨.mp3", img: "unnamed (18).jpg", title: "完美折磨", artist: "陈默之" },
+        { src: "ssVid.net--都一样会走.mp3", img: "unnamed (19).jpg", title: "都一样会走", artist: "1K" },
+        { src: "ssVid.net--愿某人.mp3", img: "unnamed (20).jpg", title: "愿某人", artist: "王泽科" },
+        { src: "ssVid.net--The-Fog-Space.mp3", img: "unnamed (22).jpg", title: "凄美地", artist: "郭顶" },
+      ];
 
-        // --- Music Player Logic ---
-        const songs = [{
-                img: "2025120818531-ezgif.com-video-to-gif-converter.gif",
-                title: "(Not Playing)",
-                artist: "Use arrows to select songs"
-            },
-            {
-                src: "ssVid.net--Jumping-Machine-跳楼机.mp3",
-                img: "tiaolouji.jpg",
-                title: "跳樓機",
-                artist: "LBI利比"
-            },
-            {
-                src: "ssVid.net--夜半.mp3",
-                img: "unnamed (21).jpg",
-                title: "夜半",
-                artist: "王泽科"
-            },
-            {
-                src: "ssVid.net--生分-男版.mp3",
-                img: "unnamed (11).jpg",
-                title: "生分 (男版)",
-                artist: "en"
-            },
-            {
-                src: "ssVid.net--放纵想念.mp3",
-                img: "download (4).jpg",
-                title: "放纵想念",
-                artist: "刘思达"
-            },
-            {
-                src: "ssVid.net--四点的海棠花未眠.mp3",
-                img: "images0.jpg",
-                title: "四点的海棠",
-                artist: "渡"
-            },
-            {
-                src: "ssVid.net--素未谋面.mp3",
-                img: "unnamed (17).jpg",
-                title: "素未谋面",
-                artist: "王忻辰"
-            },
-            {
-                src: "ssVid.net--察觉.mp3",
-                img: "unnamed (13).jpg",
-                title: "察觉",
-                artist: "音格概念 & 逸霄"
-            },
-            {
-                src: "ssVid.net--鄭潤澤-你已把我的心磨平-你已把我的心磨平-把所有躁動都磨平-不知覺地傾聽-心裡反覆質疑-動態歌詞MV.mp3",
-                img: "unnamed (14).jpg",
-                title: "你已把我的心磨平",
-                artist: "鄭潤澤"
-            },
-            {
-                src: "ssVid.net--可望不可及.mp3",
-                img: "unnamed (16).jpg",
-                title: "可望不可及",
-                artist: "黑崎子 & 单循"
-            },
-            {
-                src: "ssVid.net--城外.mp3",
-                img: "unnamed (15).jpg",
-                title: "城外",
-                artist: "郑润泽"
-            },
-            {
-                src: "ssVid.net--完美折磨.mp3",
-                img: "unnamed (18).jpg",
-                title: "完美折磨",
-                artist: "陈默之"
-            },
-            {
-                src: "ssVid.net--都一样会走.mp3",
-                img: "unnamed (19).jpg",
-                title: "都一样会走",
-                artist: "1K"
-            },
-            {
-                src: "ssVid.net--愿某人.mp3",
-                img: "unnamed (20).jpg",
-                title: "愿某人",
-                artist: "王泽科"
-            },
-            {
-                src: "ssVid.net--The-Fog-Space.mp3",
-                img: "unnamed (22).jpg",
-                title: "凄美地",
-                artist: "郭顶"
-            },
-        ];
+      const audio = document.getElementById('player');
+      const thumb = document.getElementById('songThumb');
+      const titleEl = document.getElementById('songTitle');
+      const artistEl = document.getElementById('songArtist');
+      let currentSong = 0;
 
-        const audio = document.getElementById('player');
-        const thumb = document.getElementById('songThumb');
-        const titleEl = document.getElementById('songTitle');
-        const artistEl = document.getElementById('songArtist');
-        let currentSong = 0;
+      function loadSong(i) {
+        currentSong = (i + songs.length) % songs.length;
+        const s = songs[currentSong];
+        audio.src = s.src || "";
+        thumb.src = s.img;
+        titleEl.textContent = s.title;
+        artistEl.textContent = s.artist;
+      }
+      loadSong(0);
 
-        function loadSong(i) {
-            currentSong = (i + songs.length) % songs.length;
-            const s = songs[currentSong];
-            audio.src = s.src || "";
-            thumb.src = s.img;
-            titleEl.textContent = s.title;
-            artistEl.textContent = s.artist;
-        }
-        loadSong(0);
+      document.getElementById('nextSong').onclick = () => loadSong(currentSong + 1);
+      document.getElementById('prevSong').onclick = () => loadSong(currentSong - 1);
 
-        document.getElementById('nextSong').onclick = () => loadSong(currentSong + 1);
-        document.getElementById('prevSong').onclick = () => loadSong(currentSong - 1);
+      function togglePlayPause() {
+        if (audio.paused && audio.src) audio.play();
+        else audio.pause();
+      }
 
-        function togglePlayPause() {
-            if (audio.paused && audio.src) audio.play();
-            else audio.pause();
-        }
-
-        // Simple Waveform Mockup
-        const waveform = document.getElementById('waveform');
-        for (let i = 0; i < 15; i++) {
-            const b = document.createElement('div');
-            b.className = 'bar';
-            b.style.height = '5px';
-            waveform.appendChild(b);
-        }
+      const waveform = document.getElementById('waveform');
+      for (let i = 0; i < 15; i++) {
+        const b = document.createElement('div');
+        b.className = 'bar';
+        b.style.height = '5px';
+        waveform.appendChild(b);
+      }
     </script>
-</body>
-
+  </body>
 </html>
